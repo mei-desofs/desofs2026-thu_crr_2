@@ -1,15 +1,13 @@
 # DESOFS 2026 - Team 2
 
-## Identificação do Projeto
+## Group
 - **Team Number:** 2
 - **Repository Name:** desofs2026_t2
 - **Topic:** BioCantinas
 
 ---
 
-## Elementos do Grupo
-
-Aqui estão todos os elementos do grupo:
+## Team Members
 
 - Diogo Rodrigues - 1221959
 - João Fraga - 1250523
@@ -19,9 +17,19 @@ Aqui estão todos os elementos do grupo:
 
 ---
 
-## Artefactos da Fase 1
+# Checklist and assignment of Deliverables
 
-Abaixo encontra-se a organização da documentação com rastreabilidade entre todos os artefactos:
+| Member     | Work Assigned     | Description                                                                                                                                                                                                                                                                                   | Estado |
+|:-----------|:------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------:|
+| Team       | 3.1, 3.2 e 11     | - [X] 3.1 System overview <br> - [X] 3.2 Domain model <br> - [X] Estrutura base de 11. Rastreabilidade entre artefactos                                                                                                                                                                       |  [ ]   |
+| **Diogo**  | 4.1, 4.2 e 5      | - [X] Catálogo de **Requisitos Funcionais** (`FR-xx`) alinhados com fluxos. <br> - [X] Catálogo de **Requisitos Não Funcionais** (`NFR-xx`) relevantes p/ desenho. <br> - [X] Catálogo de **Abuse Cases** (`AC-xx`) com atores maliciosos e impactos.                                         |  [ ]   |
+| **Mateus** | 4.3, 9 e 11       | - [ ] Catálogo de **Security Requirements** (`SR-xx`) isolados dos restantes. <br> - [ ] Checklist **ASVS v5.0.0** preenchida com foco arquitetural (Level 2). <br> - [ ] Secção 11: **Rastreabilidade final** garantindo a ligação SR -> ASVS -> Testes.                                     |  [ ]   |
+| **João**   | 6.1, 6.2, 8 e 7   | - [ ] Tabela de **Info Base** (Entry/exit points, assets, trust levels). <br> - [ ] **DFDs** completos (Level 0, Level 1 e Level 2 se necessário). <br> - [ ] Mapa identificativo das **Trust Boundaries**. <br> - [ ] Tabela e Metodologia de **Risk Assessment** (Priorização justificada). |  [ ]   |
+| **Fábio**  | 6.3, 6.2, 10 e 12 | - [ ] Matriz **STRIDE** aplicada a cada elemento dos DFDs. <br> - [ ] Catálogo de **Mitigations** (`MIT-xx`) ligadas aos riscos altos. <br> - [ ] Metodologia e plano de **Security Testing** (Testes planeados). <br> - [ ] Documentação do **Review Process** (Revisão cruzada e final).    |  [ ]   |
+
+---
+
+## Artefactos da Fase 1
 
 ### System Overview / Domain Model
 [Ver documento](Phase_1/system_overview.md)
