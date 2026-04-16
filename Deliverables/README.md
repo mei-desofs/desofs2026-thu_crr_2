@@ -26,7 +26,10 @@ Abaixo encontra-se a organização da documentação com rastreabilidade entre t
 ### System Overview / Domain Model
 [Ver documento](Phase_1/system_overview.md)
 
-### Data Flow Diagrams (DFDs)
+### Requirements (Functional, Non-Functional)
+[Ver documento](Phase_1/f_nf_requirements.md)
+
+### Threat Modeling
 [Ver documento](Phase_1/threat_modeling.md)
 
 ### STRIDE Analysis

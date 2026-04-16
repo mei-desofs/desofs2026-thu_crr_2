@@ -1,6 +1,6 @@
 [Voltar ao README](../README.md)
 
-[Próximo ficheiro](threat_modeling.md)
+[Próximo ficheiro](f_nf_requirements.md)
 
 ---
 
@@ -182,4 +182,4 @@ Cobre a monitorização operacional e o suporte à decisão.
 
 [Voltar ao README](../README.md)
 
-[Próximo ficheiro](threat_modeling.md)
+[Próximo ficheiro](f_nf_requirements.md)
