@@ -27,7 +27,7 @@ Abaixo encontra-se a organização da documentação com rastreabilidade entre t
 [Ver documento](Phase_1/system_overview.md)
 
 ### Data Flow Diagrams (DFDs)
-[Ver documento](Phase_1/dfd.md)
+[Ver documento](Phase_1/threat_modeling.md)
 
 ### STRIDE Analysis
 [Ver documento](Phase_1/stride.md)

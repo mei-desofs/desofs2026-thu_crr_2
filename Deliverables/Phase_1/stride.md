@@ -2,7 +2,7 @@
 
 [Próximo ficheiro](abuse_cases.md)
 
-[Ficheiro anterior](dfd.md)
+[Ficheiro anterior](threat_modeling.md)
 
 ---
 
@@ -12,4 +12,4 @@
 
 [Próximo ficheiro](abuse_cases.md)
 
-[Ficheiro anterior](dfd.md)
+[Ficheiro anterior](threat_modeling.md)
