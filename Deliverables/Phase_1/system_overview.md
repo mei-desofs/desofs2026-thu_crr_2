@@ -3,180 +3,177 @@
 [Próximo ficheiro](f_nf_requirements.md)
 
 ---
+## System Overview
 
-## Vista Geral do Sistema
+**BioCantinas** is a web information system designed for the sustainable management of
+school canteens and nursing homes in the municipality of Cinfães. The system supports
+menu planning processes, supplier and stock management, sanitary control, and meal
+reservations, promoting the use of organic and locally produced products.
 
-O **BioCantinas** é um sistema de informação web destinado à gestão sustentável de
-cantinas escolares e lares de idosos no município de Cinfães. O sistema suporta
-processos de planeamento de ementas, gestão de fornecedores e stock, controlo
-sanitário e reserva de refeições, promovendo o uso de produtos biológicos e de
-produção local.
+### Purpose of the system
 
-### Finalidade do sistema
+To digitalize and automate the operational flows of canteens in the BioCantinas network,
+ensuring product traceability, waste control, sanitary safety, and nutritional
+transparency for end users.
 
-Digitalizar e automatizar os fluxos operacionais das cantinas da rede BioCantinas,
-garantindo rastreabilidade dos produtos, controlo de desperdício, segurança sanitária
-e transparência nutricional para os utilizadores finais.
+### Main users and profiles
 
-### Principais utilizadores e perfis
+| Profile                          | Main responsibilities                                                                                                      |
+|----------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| Network Admin                    | Global network management, application approval, supplier quarantine, sanitary closure of parishes, network KPIs           |
+| Canteen Manager                  | Canteen management, quarantine activation, canteen KPI visualisation                                                       |
+| Refectory Manager                | Refectory management, refectory KPI visualisation                                                                          |
+| Dietician Team                   | Menu publication, nutritional and allergen validation                                                                      |
+| Stock Manager                    | Stock management, supplier orders, shortage notifications                                                                  |
+| Supplier                         | Viewing and responding to orders, management of available products                                                         |
+| Customer (School / Nursing Home) | Menu consultation, meal reservation, feedback                                                                              |
 
-| Perfil                           | Responsabilidades principais                                                                                              |
-|----------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| Network Admin                    | Gestão global da rede, aprovação de candidaturas, quarentena de fornecedores, fecho sanitário de freguesias, KPIs da rede |
-| Canteen Manager                  | Gestão da cantina, ativação de quarentenas, visualização de KPIs da cantina                                               |
-| Refectory Manager                | Gestão do refeitório, visualização de KPIs do refeitório                                                                  |
-| Dietician Team                   | Publicação de ementas, validação nutricional e de alergénios                                                              |
-| Stock Manager                    | Gestão de stock, encomendas a fornecedores, notificações de rotura                                                        |
-| Supplier                         | Visualização e resposta a encomendas, gestão de produtos disponíveis                                                      |
-| Customer (School / Nursing Home) | Consulta de ementas, reserva de refeições, feedback                                                                       |
+### Main business operations
 
-### Principais operações de negócio
+- Supplier application and onboarding (with validated parish selection)
+- Publication and approval of weekly menus with nutritional information
+- Quantity planning and automatic order generation
+- Meal reservation and consumption by customers
+- Supplier quarantine and sanitary closure of parishes
+- Calculation and visualization of KPIs (waste, organic percentage,
+  performance by canteen/refectory/network)
 
-- Candidatura e onboarding de fornecedores (com seleção validada de freguesia)
-- Publicação e aprovação de ementas semanais com informação nutricional
-- Planeamento de quantidades e geração automática de encomendas
-- Reserva e consumo de refeições por clientes
-- Quarentena de fornecedores e fecho sanitário de freguesias
-- Cálculo e visualização de KPIs (desperdício, percentagem orgânica,
-  desempenho por cantina/refeitório/rede)
+### Main solution components
 
-### Principais componentes da solução
+The system follows a **Layered Architecture**:
 
-O sistema segue uma **arquitetura em camadas** (Layered Architecture):
+- **Frontend** — React + Vite, SPA with client-side routing (React Router)
+- **REST API** — Node.js + Express, exposed via HTTP for consumption by the frontend
+- **Backend (internal layers)**
+  - *Frameworks/Drivers Layer* — HTTP routing, Express configuration, MySQL driver
+  - *Adapters Layer* — controllers: input validation, delegation to services
+  - *Application Layer* — services: business logic, repository coordination
+  - *Domain Model Layer* — core entities and business rules
+- **Database** — MySQL, accessed via Sequelize ORM
+- **File storage** — PDF documents submitted by suppliers during application;
+  reports and KPI exports generated on the server
 
-- **Frontend** — React + Vite, SPA com routing client-side (React Router)
-- **REST API** — Node.js + Express, exposta via HTTP para consumo pelo frontend
-- **Backend (camadas internas)**
-    - *Frameworks/Drivers Layer* — routing HTTP, configuração Express, driver MySQL
-    - *Adapters Layer* — controllers: validação de input, delegação para services
-    - *Application Layer* — services: lógica de negócio, coordenação de repositórios
-    - *Domain Model Layer* — entidades e regras de negócio core
-- **Base de dados** — MySQL, acesso via ORM Sequelize
-- **Armazenamento de ficheiros** — documentos PDF submetidos por fornecedores na
-  candidatura; relatórios e exportações de KPIs gerados no servidor
+### Data handled by the application
 
-### Dados tratados pela aplicação
+- Users, credentials and access profiles (role-based)
+- Suppliers, products, location (municipality, parish, zone)
+- Menus, meals, dishes, recipes, ingredients and nutritional information
+- Reservations, served meals and feedback
+- Stock, batches, orders and ordered products
+- Production plannings and planning lines
+- KPIs for waste, organic percentage and operational performance
+- Supplier documentation (PDF files)
+- Quarantine and sanitary parish closure records
 
-- Utilizadores, credenciais e perfis de acesso (role-based)
-- Fornecedores, produtos, localização (município, freguesia, zona)
-- Ementas, refeições, pratos, receitas, ingredientes e informação nutricional
-- Reservas, refeições servidas e feedback
-- Stock, lotes, encomendas e produtos encomendados
-- Planeamentos de produção e linhas de planeamento
-- KPIs de desperdício, percentagem orgânica e desempenho operacional
-- Documentação de fornecedores (ficheiros PDF)
-- Registos de quarentena e fecho sanitário de freguesias
+### Interactions between API, database and file storage
 
-### Interações entre API, base de dados e armazenamento de ficheiros
+The frontend communicates exclusively with the REST API via HTTP. The API accesses the
+database through the Sequelize ORM and the server file system for upload, read and
+document organization operations. There is no direct access from the frontend to the
+database or file system.
 
-O frontend comunica exclusivamente com a REST API via HTTP. A API acede à base de
-dados através do ORM Sequelize e ao sistema de ficheiros do servidor para operações
-de upload, leitura e organização de documentos. Não existe acesso direto do frontend
-à base de dados ou ao sistema de ficheiros.
+### Planned use of server operating system features
 
-### Utilização prevista de funcionalidades do sistema operativo no servidor
-
-- **Gestão de ficheiros e diretórios**: organização de documentos de fornecedores e
-  relatórios em diretórios estruturados por cantina e época letiva
-- **Upload e leitura de ficheiros**: receção de PDFs submetidos pelos fornecedores
-  no processo de candidatura
-- **Geração de ficheiros**: exportação de relatórios de KPIs em formato PDF ou CSV
-  a pedido dos gestores
-- **Agendamento de tarefas (cron/scheduler)**: geração automática semanal de
-  planeamentos de produção e encomendas a fornecedores com base nas ementas
-  publicadas e no stock disponível
+- **File and directory management**: organization of supplier documents and reports
+  in directories structured by canteen and academic year
+- **File upload and reading**: receipt of PDFs submitted by suppliers during the
+  application process
+- **File generation**: export of KPI reports in PDF or CSV format at the request
+  of managers
+- **Task scheduling (cron/scheduler)**: automatic weekly generation of production
+  plannings and supplier orders based on published menus and available stock
 
 ---
 
-## Modelo de Domínio
+## Domain Model
 
-O modelo de domínio do BioCantinas organiza-se em seis **aggregates** nucleares,
-refletindo os contextos funcionais principais do sistema. As roles ficam definidas
-transversalmente e condicionam os fluxos de acesso e as operações sensíveis.
+The BioCantinas domain model is organized into six core **aggregates**, reflecting the
+main functional contexts of the system. Roles are defined transversally and condition
+access flows and sensitive operations.
 
 ![Domain Model](../assets/domain_model.png)
 
 #### Menu & Meal
-Cobre a definição, planeamento e classificação de refeições e ementas.
+Covers the definition, planning and classification of meals and menus.
 
-- **Entidades**: Menu, Meal, Dish, Recipe, Ingredient, Chef, Dietician Team, Canteen,
+- **Entities**: Menu, Meal, Dish, Recipe, Ingredient, Chef, Dietician Team, Canteen,
   Refectory
-- **Invariante**: uma ementa só pode ser publicada após validação nutricional pelo
+- **Invariant**: a menu may only be published after nutritional validation by the
   Dietician Team
-- **Operações sensíveis**: publicação de ementa, aprovação de informação nutricional,
-  gestão de alergénios
+- **Sensitive operations**: menu publication, nutritional information approval,
+  allergen management
 
 #### Reservation
-Cobre a interação dos clientes com o sistema.
+Covers customer interaction with the system.
 
-- **Entidades**: Customer (School Customer, Nursing Home Staff), Reservation, Served
+- **Entities**: Customer (School Customer, Nursing Home Staff), Reservation, Served
   Meal, Feedback
-- **Invariante**: uma reserva só pode ser criada se existir ementa publicada para a
-  data e refeitório selecionados
-- **Operações sensíveis**: reserva de refeição, registo de consumo, submissão de
-feedback
+- **Invariant**: a reservation may only be created if a published menu exists for the
+  selected date and refectory
+- **Sensitive operations**: meal reservation, consumption registration, feedback
+  submission
 
 #### Supplier
-Cobre o recrutamento, onboarding e controlo sanitário de fornecedores.
+Covers supplier recruitment, onboarding and sanitary control.
 
-- **Entidades**: Farmer, Application, Supplier, Expected Product, Recruitment Team
-- **Invariante**: a seleção de localização (freguesia) é obrigatória e validada contra
-  lista oficial; apenas agricultores com candidatura aprovada transitam para Supplier
-- **Operações sensíveis**: submissão de candidatura (com upload de documentos PDF),
-  aprovação/rejeição pelo Recruitment Team, ativação de quarentena, fecho sanitário
-  de freguesia
-- **Ficheiros associados**: documentos PDF submetidos na candidatura, organizados em
-  diretórios por fornecedor no servidor
+- **Entities**: Farmer, Application, Supplier, Expected Product, Recruitment Team
+- **Invariant**: location selection (parish) is mandatory and validated against the
+  official list; only farmers with an approved application transition to Supplier
+- **Sensitive operations**: application submission (with PDF document upload),
+  approval/rejection by the Recruitment Team, quarantine activation, sanitary
+  closure of parish
+- **Associated files**: PDF documents submitted during the application, organized in
+  per-supplier directories on the server
 
 #### Stock & Order
-Cobre o controlo de inventário e o ciclo de encomendas.
+Covers inventory control and the order cycle.
 
-- **Entidades**: Stock Manager, Stock, Product, Batch, Order, Ordered Product
-- **Invariante**: encomendas não podem incluir produtos de fornecedores em quarentena
-  ou de parishes em fecho sanitário ativo
-- **Operações sensíveis**: criação de encomenda, confirmação de entrega, gestão de
-  lotes, notificação de rotura de stock
+- **Entities**: Stock Manager, Stock, Product, Batch, Order, Ordered Product
+- **Invariant**: orders may not include products from suppliers under quarantine
+  or from parishes with an active sanitary closure
+- **Sensitive operations**: order creation, delivery confirmation, batch management,
+  stock shortage notification
 
 #### Planning
-Cobre a previsão de quantidades e o ajuste dinâmico de encomendas.
+Covers quantity forecasting and dynamic order adjustment.
 
-- **Entidades**: Planning, Lines of Planning
-- **Invariante**: o planeamento verifica disponibilidade de stock antes de gerar
-  encomendas; as quantidades são ajustadas após cada reserva confirmada
-- **Operações sensíveis**: geração automática de planeamento semanal (operação de
-  servidor agendada), ajuste de quantidades por reservas
+- **Entities**: Planning, Lines of Planning
+- **Invariant**: planning verifies stock availability before generating orders;
+  quantities are adjusted after each confirmed reservation
+- **Sensitive operations**: automatic weekly planning generation (scheduled server
+  operation), quantity adjustment by reservations
 
 #### KPI & Statistics
-Cobre a monitorização operacional e o suporte à decisão.
+Covers operational monitoring and decision support.
 
-- **Entidades**: KPI de desperdício, KPI de percentagem orgânica, KPI de
-  desempenho por cantina/refeitório/rede
-- **Invariante**: o acesso a KPIs é restrito por role — Canteen Manager vê a sua
-  cantina, Refectory Manager vê o seu refeitório, Network Admin vê a rede completa
-  com filtros por cantina, refeitório e produtor
-- **Operações sensíveis**: exportação de relatórios (geração de ficheiro no servidor),
-  cálculo de percentagem orgânica por peso
+- **Entities**: Waste KPI, Organic percentage KPI, Performance KPI by
+  canteen/refectory/network
+- **Invariant**: access to KPIs is restricted by role — Canteen Manager sees their
+  own canteen, Refectory Manager sees their own refectory, Network Admin sees the
+  full network with filters by canteen, refectory and producer
+- **Sensitive operations**: report export (file generation on the server),
+  organic percentage calculation by weight
 
-### Roles e condicionamento de fluxos
+### Roles and flow conditioning
 
-| Role              | Aggregates acessíveis                | Restrições                           |
-|-------------------|--------------------------------------|--------------------------------------|
-| Network Admin     | Todos                                | Sem restrição de scope               |
-| Canteen Manager   | Menu, Stock, Planning, KPI (cantina) | Scope limitado à sua cantina         |
-| Refectory Manager | Reservation, KPI (refeitório)        | Scope limitado ao seu refeitório     |
-| Dietician Team    | Menu & Meal                          | Apenas publicação e validação        |
-| Stock Manager     | Stock & Order                        | Gestão de stock e encomendas         |
-| Supplier          | Order (read), Product                | Apenas os seus produtos e encomendas |
-| Customer          | Reservation                          | Apenas reservas próprias             |
+| Role              | Accessible aggregates                | Restrictions                          |
+|-------------------|--------------------------------------|---------------------------------------|
+| Network Admin     | All                                  | No scope restriction                  |
+| Canteen Manager   | Menu, Stock, Planning, KPI (canteen) | Scope limited to their canteen        |
+| Refectory Manager | Reservation, KPI (refectory)         | Scope limited to their refectory      |
+| Dietician Team    | Menu & Meal                          | Publication and validation only       |
+| Stock Manager     | Stock & Order                        | Stock and order management            |
+| Supplier          | Order (read), Product                | Their own products and orders only    |
+| Customer          | Reservation                          | Their own reservations only           |
 
-### Elementos ligados a ficheiros e operações do servidor
+### Elements linked to files and server operations
 
-| Elemento                             | Operação                            | Localização                    |
-|--------------------------------------|-------------------------------------|--------------------------------|
-| Documentos de candidatura (Supplier) | Upload PDF no registo               | `/uploads/suppliers/{id}/`     |
-| Relatórios de KPI                    | Geração e download                  | `/reports/{canteen}/{season}/` |
-| Planeamento semanal                  | Geração agendada (cron)             | Persistência em base de dados  |
-| Exportação de encomendas             | Geração de ficheiro para fornecedor | `/exports/orders/`             |
+| Element                              | Operation                             | Location                       |
+|--------------------------------------|---------------------------------------|--------------------------------|
+| Application documents (Supplier)     | PDF upload on registration            | `/uploads/suppliers/{id}/`     |
+| KPI reports                          | Generation and download               | `/reports/{canteen}/{season}/` |
+| Weekly planning                      | Scheduled generation (cron)           | Persistence in database        |
+| Order export                         | File generation for supplier          | `/exports/orders/`             |
 
 ---
 
