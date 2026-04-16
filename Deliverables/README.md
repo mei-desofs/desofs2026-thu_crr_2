@@ -29,6 +29,9 @@ Abaixo encontra-se a organização da documentação com rastreabilidade entre t
 ### Requirements (Functional, Non-Functional)
 [Ver documento](Phase_1/f_nf_requirements.md)
 
+### Security Requirements
+[Ver documento](Phase_1/security_requirements.md)
+
 ### Threat Modeling
 [Ver documento](Phase_1/threat_modeling.md)
 
@@ -43,9 +46,6 @@ Abaixo encontra-se a organização da documentação com rastreabilidade entre t
 
 ### Mitigations
 [Ver documento](Phase_1/mitigations.md)
-
-### Security Requirements
-[Ver documento](Phase_1/security_requirements.md)
 
 ### ASVS Mapping
 [Ver documento](Phase_1/asvs.md)

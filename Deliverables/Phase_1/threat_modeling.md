@@ -2,7 +2,7 @@
 
 [Próximo ficheiro](stride.md)
 
-[Ficheiro anterior](f_nf_requirements.md)
+[Ficheiro anterior](security_requirements.md)
 
 ---
 
@@ -12,4 +12,4 @@
 
 [Próximo ficheiro](stride.md)
 
-[Ficheiro anterior](f_nf_requirements.md)
+[Ficheiro anterior](security_requirements.md)

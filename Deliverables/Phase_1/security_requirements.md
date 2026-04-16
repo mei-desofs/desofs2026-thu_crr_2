@@ -1,8 +1,8 @@
 [Voltar ao README](../README.md)
 
-[Próximo ficheiro](asvs.md)
+[Próximo ficheiro](threat_modeling.md)
 
-[Ficheiro anterior](mitigations.md)
+[Ficheiro anterior](f_nf_requirements.md)
 
 ---
 # Security Requirements
@@ -28,6 +28,6 @@ regulatory, ...) and following a specified nomenclature e.g: **SR-xx**
 
 [Voltar ao README](../README.md)
 
-[Próximo ficheiro](asvs.md)
+[Próximo ficheiro](threat_modeling.md)
 
-[Ficheiro anterior](mitigations.md)
+[Ficheiro anterior](f_nf_requirements.md)
