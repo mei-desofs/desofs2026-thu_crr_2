@@ -16,6 +16,49 @@ To digitalize and automate the operational flows of canteens in the BioCantinas 
 ensuring product traceability, waste control, sanitary safety, and nutritional
 transparency for end users.
 
+### Architecture Overview
+
+The system architecture is documented using a C4 models, providing increasing levels of detail regarding the system’s organization and internal structure.
+
+#### Level 1 – System Context
+![Vista lógica 1](assets/lvl1logic.png)
+
+The Level 1 diagram presents a high-level view of the BioCantinas system as a single logical entity. At this level, the system is shown as responsible for exposing a backend API that supports all application functionalities.
+
+The system interacts with a database for persistent data storage and retrieval. All core operations, including menu management, reservations, supplier management, and KPI calculation, are handled internally and exposed through the backend API.
+
+#### Level 2
+
+The Level 2 diagram refines the architecture by detailing the main internal container responsible for business logic execution: the backend.
+
+At this level, the backend is represented as the core component that:
+
+- Exposes RESTful API endpoints
+- Processes incoming requests
+- Coordinates business logic execution
+- Interacts with the database for data persistence
+
+The API acts as the single entry point to the system, enforcing validation, access control, and orchestration of operations across different functional domains such as reservations, menus, stock, and suppliers.
+
+![Vista lógica 2](assets/lvl2logic.png)
+
+#### Level 3
+The Level 3 diagram provides a detailed view of the internal structure of the backend, following a layered and modular design aligned with best practices for maintainability and separation of concerns.
+
+The backend is organized into the following main components:
+
+- Routes - Define the available API endpoints and map HTTP requests to the appropriate controllers.
+- Controllers - Handle incoming requests, perform input validation, and delegate processing to the service layer.
+- Services - Implement the core business logic, enforce domain rules, and coordinate interactions between components.
+- Models - Represent the domain entities and handle data persistence through the ORM layer.
+
+The flow of execution follows a clear and consistent pattern:
+Routes → Controllers → Services → Models
+
+This structure ensures that responsibilities are well-defined, promotes reusability, and simplifies testing and maintenance. It also enforces a clean separation between presentation logic, business logic, and data access.
+
+![Vista implementação 3](assets/lvl3Imp.png)
+
 ### Main users and profiles
 
 | Profile                          | Main responsibilities                                                                                                      |
@@ -42,7 +85,6 @@ transparency for end users.
 
 The system follows a **Layered Architecture**:
 
-- **Frontend** — React + Vite, SPA with client-side routing (React Router)
 - **REST API** — Node.js + Express, exposed via HTTP for consumption by the frontend
 - **Backend (internal layers)**
   - *Frameworks/Drivers Layer* — HTTP routing, Express configuration, MySQL driver
@@ -91,7 +133,7 @@ The BioCantinas domain model is organized into six core **aggregates**, reflecti
 main functional contexts of the system. Roles are defined transversally and condition
 access flows and sensitive operations.
 
-![Domain Model](../assets/domain_model.png)
+![Domain Model](assets/domain_model.png)
 
 #### Menu & Meal
 Covers the definition, planning and classification of meals and menus.
