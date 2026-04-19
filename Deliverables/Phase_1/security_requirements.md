@@ -10,7 +10,7 @@
 In this md file will be presented all security requirements justified (best practice, from threats identified,
 regulatory, ...) and following a specified nomenclature e.g: **SR-xx**
 
-### Authentication & access control
+### Authentication & access control 
 
 | Field             | Description                                                                                                      |
 |-------------------|------------------------------------------------------------------------------------------------------------------|
@@ -30,7 +30,7 @@ regulatory, ...) and following a specified nomenclature e.g: **SR-xx**
 
 | Field             | Description                                                       |
 |-------------------|-------------------------------------------------------------------|
-| **Identifier**    | SR-03                                                             |
+| **Identifier**    | SR-03                                                             | 
 | **Requirement**   | Server-side RBAC                                                  |
 | **Definition**    | The system must have Role Based Access Control on the server side |
 | **Justification** | All role verifications are done on the server side                |
@@ -44,7 +44,39 @@ regulatory, ...) and following a specified nomenclature e.g: **SR-xx**
 | **Justification** | Prevent token forgery                                                               |
 | **Linked items**  |                                                                                     |
 
+| Field             | Description                                     |
+|-------------------|-------------------------------------------------|
+| **Identifier**    | SR-15                                           |
+| **Requirement**   | Secure password storage                         |
+| **Definition**    | The system must never store plaintext passwords |
+| **Justification** | Prevent credential theft                        |
+| **Linked items**  |                                                 |
+
+| Field             | Description                                     |
+|-------------------|-------------------------------------------------|
+| **Identifier**    | SR-16                                           |
+| **Requirement**   | Login attempt protection                        |
+| **Definition**    | The system must prevent repeated login attempts |
+| **Justification** | Prevents brute-force attacks                    |
+| **Linked items**  |                                                 |
+
+| Field             | Description                                                              |
+|-------------------|--------------------------------------------------------------------------|
+| **Identifier**    | SR-17                                                                    |
+| **Requirement**   | Token session invalidation                                               |
+| **Definition**    | The system must revoke or invalidate tokens before their expiration time |
+| **Justification** | Prevent continued access after logout                                    |
+| **Linked items**  |                                                                          |
+
 ### Data security
+
+| Field             | Description                                                                                                        |
+|-------------------|--------------------------------------------------------------------------------------------------------------------|
+| **Identifier**    | SR-06                                                                                                              |
+| **Requirement**   | Upload validation                                                                                                  |
+| **Definition**    | The system must validate uploaded data to ensure that it meets the requirements needed (type, size, content, etc.) |
+| **Justification** | Prevent malicious file uploads                                                                                     |
+| **Linked items**  |                                                                                                                    |
 
 | Field             | Description                                                                                      |
 |-------------------|--------------------------------------------------------------------------------------------------|
@@ -65,14 +97,6 @@ regulatory, ...) and following a specified nomenclature e.g: **SR-xx**
 | **Linked items**  |                              |
 
 ### Input validation and data handling
-
-| Field             | Description                                                                                                        |
-|-------------------|--------------------------------------------------------------------------------------------------------------------|
-| **Identifier**    | SR-06                                                                                                              |
-| **Requirement**   | Upload validation                                                                                                  |
-| **Definition**    | The system must validate uploaded data to ensure that it meets the requirements needed (type, size, content, etc.) |
-| **Justification** | Prevent malicious file uploads                                                                                     |
-| **Linked items**  |                                                                                                                    |
 
 | Field             | Description                                                                                            |
 |-------------------|--------------------------------------------------------------------------------------------------------|
@@ -109,6 +133,14 @@ regulatory, ...) and following a specified nomenclature e.g: **SR-xx**
 | **Definition**    | The system must log all relevant and important events                                    |
 | **Justification** | Enables faster response to incidents and better detection/investigation of possible bugs |
 | **Linked items**  |                                                                                          |
+
+| Field             | Description                                                                 |
+|-------------------|-----------------------------------------------------------------------------|
+| **Identifier**    | SR-12                                                                       |
+| **Requirement**   | Log immutability                                                            |
+| **Definition**    | Logs must be protected against modification or deletion after being written |
+| **Justification** | Ensure integrity of logs                                                    |
+| **Linked items**  |                                                                             |
 
 ### Availability
 
