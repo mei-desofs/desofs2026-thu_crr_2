@@ -1,3 +1,11 @@
+[Voltar ao README](../README.md)
+
+[Próximo ficheiro](mitigations.md)
+
+[Ficheiro anterior](abuse_cases.md)
+
+---
+
 ## Risk assessment (ISO 31000:2018)
 
 ### Methodology
@@ -6,7 +14,7 @@ For this section, "**ISO 31000:2018** - *Risk management - Guidelines*" was adop
 
 Reference: [ISO 31000:2018](https://studylib.net/doc/26126608/iso-31000?p=13).
 
-![img.png](../images/img.png)
+![matrixforiskassessment.png](../images/matrixforiskassessment.png)
 
 The **5×5 matrix** illustrated above is used to combine **Impact** and **Likelihood** and determine the **risk level** for each scenario, consistent with the usual style of representation in risk assessment under ISO 31000.
 
@@ -106,5 +114,12 @@ The score is **Impact × Likelihood**. The level (Low / Medium / …) is read fr
 | R8 | `express.json()` without `limit` (large payload / DoS)                 | 3 | 3 | **9**    | Medium         | 7        |
 | R9 | `console.log` with `req.body` (data in server logs)                    | 2 | 2 | **4**    | Low            | 9        |
 
+---
+
+[Voltar ao README](../README.md)
+
+[Próximo ficheiro](mitigations.md)
+
+[Ficheiro anterior](abuse_cases.md)
 
 
