@@ -19,14 +19,14 @@
 
 # Checklist and assignment of Deliverables
 
-| Member      | Work Assigned  | Description                                                                                                                                                                                                                                                                                 | Estado |
-|:------------|:---------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------:|
-| Team        | 3.1, 3.2 e 11  | - [X] 3.1 System overview <br> - [X] 3.2 Domain model <br> - [X] Estrutura base de 11. Rastreabilidade entre artefactos                                                                                                                                                                     |  [ ]   |
-| **Diogo**   | 4.1, 4.2 e 5   | - [X] Catálogo de **Requisitos Funcionais** (`FR-xx`) alinhados com fluxos. <br> - [X] Catálogo de **Requisitos Não Funcionais** (`NFR-xx`) relevantes p/ desenho. <br> - [X] Catálogo de **Abuse Cases** (`AC-xx`) com atores maliciosos e impactos.                                       |  [ ]   |
-| **Mateus**  | 4.3, 9 e 11    | - [ ] Catálogo de **Security Requirements** (`SR-xx`) isolados dos restantes. <br> - [ ] Checklist **ASVS v5.0.0** preenchida com foco arquitetural (Level 2). <br> - [ ] Secção 11: **Rastreabilidade final** garantindo a ligação SR -> ASVS -> Testes.                                   |  [ ]   |
-| **João**    | 6.2, 7 e 8     | - [ ] **DFDs** completos (Level 0, Level 1 e Level 2 se necessário). <br> - [ ] Tabela e Metodologia de **Risk Assessment** (Priorização justificada). <br> - [ ] Catálogo de **Mitigations** (`MIT-xx`) ligadas aos riscos altos. <br>                                                     |  [ ]   |
-| **Fábio**   | 6.1, 6.2 e 6.3 | - [X] Tabela de **Info Base** (Entry/exit points, assets, trust levels). <br> - [X] Matriz **STRIDE** aplicada a cada elemento dos DFDs. <br> - [X] **DFDs** completos (Level 0, Level 1 e Level 2 se necessário).  <br> - [X] Mapa identificativo das **Trust Boundaries**.                |  [ ]   |
-| **João T**  | 10 e 12        | - [ ] Metodologia e plano de **Security Testing** (Testes planeados).  <br> - [ ] Documentação do **Review Process** (Revisão cruzada e final).                                                                                                                                             |  [ ]   |
+| Member      | Work Assigned  | Description                                                                                                                                                                                                                                                                         | Status |
+|:------------|:---------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------:|
+| Team        | 3.1, 3.2 e 11  | - [X] 3.1 System overview <br> - [X] 3.2 Domain model <br> - [X] Base structure of 11. Traceability between artefacts                                                                                                                                                               |  [X]   |
+| **Diogo**   | 4.1, 4.2 e 5   | - [X] Catalogue of **Functional Requirements** (`FR-xx`) aligned with flows. <br> - [X] Catalogue of **Non-Functional Requirements** (`NFR-xx`) relevant for design. <br> - [X] Catalogue of **Abuse Cases** (`AC-xx`) with malicious actors and impacts.                           |  [X]   |
+| **Mateus**  | 4.3, 9 e 11    | - [ ] Catalogue of **Security Requirements** (`SR-xx`) isolated from the rest. <br> - [ ] **ASVS v5.0.0** checklist filled with architectural focus (Level 2). <br> - [ ] Section 11: **Final Traceability** ensuring the SR -> ASVS -> Tests link.                                 |  [ ]   |
+| **João**    | 6.2, 7 e 8     | - [ ] Complete **DFDs** (Level 0, Level 1 and Level 2 if necessary). <br> - [ ] **Risk Assessment** table and methodology (Justified prioritisation). <br> - [ ] Catalogue of **Mitigations** (`MIT-xx`) linked to high risks. <br>                                                 |  [ ]   |
+| **Fábio**   | 6.1, 6.2 e 6.3 | - [X] **Base Info** table (Entry/exit points, assets, trust levels). <br> - [X] **STRIDE** matrix applied to each DFD element. <br> - [X] Complete **DFDs** (Level 0, Level 1 and Level 2 if necessary).  <br> - [X] Identification map of **Trust Boundaries**.                    |  [X]   |
+| **João T**  | 10 e 12        | - [ ] **Security Testing** methodology and plan (Planned tests).  <br> - [ ] **Review Process** documentation (Cross and final review).                                                                                                                                             |  [ ]   |
 ---
 
 ## Artefactos da Fase 1
@@ -62,7 +62,3 @@
 [Ver documento](Phase_1/security_testing.md)
 
 ---
-
-## Rastreabilidade entre Artefactos
-
-Toda a documentação segue um esquema consistente de identificação e ligação entre artefactos.
