@@ -7,6 +7,10 @@
 ---
 ## Threat Modeling
 
+Threat modeling was performed to identify potential security risks in the system before defining concrete security requirements and countermeasures. This analysis focuses on understanding how the system is structured, where users and external actors interact with it, which assets need protection, and where trust boundaries exist.
+
+The process starts with an information gathering phase, followed by the creation of Data Flow Diagrams (DFDs) and the application of the STRIDE methodology to classify and analyse threats.
+
 ### Information Gathering
 
 
@@ -19,6 +23,23 @@
 
 ### Data Flow Diagrams
 
+#### Data Flow Diagram - Level 0
+
+![dfd-level0.png](assets/dfd-level0.png)
+
+#### Data Flow Diagram - Level 1
+
+![dfd-level1.png](assets/dfd-level1.png)
+
+#### Data Flow Diagram - Level 2 - Process 1 (Authentication)
+
+![dfd-level2p1.png](assets/dfd-level2p1.png)
+
+#### Data Flow Diagram - Level 2 - Process 2 (File Upload)
+
+![dfd-level2p2.png](assets/dfd-level2p2.png)
+
+---
 [Voltar ao README](../README.md)
 
 [Próximo ficheiro](stride.md)
