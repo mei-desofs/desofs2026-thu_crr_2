@@ -5,7 +5,7 @@
 [Ficheiro anterior](system_overview.md)
 
 ---
-## 4. Requirements
+## Requirements
 
 This section defines, in a structured manner, the behavior and constraints of the BioCantinas system.
 
@@ -13,7 +13,7 @@ The requirements are organized into functional and non-functional requirements, 
 
 ---
 
-## 4.1 Functional Requirements
+## Functional Requirements
 
 Functional requirements describe the behavior of the BioCantinas system, identifying the actors involved and the data manipulated.
 
@@ -84,7 +84,7 @@ Each functional requirement is defined so as to allow traceability with use case
 
 ---
 
-## 4.2 Non-Functional Requirements
+## Non-Functional Requirements
 
 Non-functional requirements define properties and constraints of the system that influence its design and implementation.
 
