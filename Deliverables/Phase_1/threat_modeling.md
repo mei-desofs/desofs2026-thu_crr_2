@@ -39,6 +39,21 @@ The process starts with an information gathering phase, followed by the creation
 
 ![dfd-level2p2.png](assets/dfd-level2p2.png)
 
+## Trust Boundaries
+
+A Trust Boundary is a logical or physical boundary that separates two contexts with different trust levels. Any data crossing such a boundary must be validated, authenticated, or authorized. It cannot be assumed to come from a trustworthy source.
+
+In the DFD's above, the Trust Boundaries are represented by the dashed lines that divides each diagram, everything on the left side is in a lower trust zone (external/public), everything to the right is inside the application's controlled perimeter.
+
+The following Trust Boundaries were identified in this system:
+
+| ID       | Trust Boundary                           | Separation                                                                                                                                                                                      | DFD Element                                        |
+|----------|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
+| **TB-1** | Internet → Express API                   | Separates unauthenticated external actors (Level 0) from the application entry point. All inbound traffic must be treated as untrusted.                                                         | External Entity (Candidate / User) → Routes        |
+| **TB-2** | Authenticated user → Protected resources | Separates a valid JWT (Level 1–3) from operations that require role-based authorization. Being authenticated does not imply being authorized.                                                   | RBAC Middleware → Business processes (P3–P7)       |
+| **TB-3** | Application → MySQL database             | Separates business logic from the data store. No query should reach the database without going through the ORM (Sequelize) layer.                                                               | Controllers → DS-1 MySQL                           |
+| **TB-4** | Application → Filesystem (`/uploads`)    | Separates the controlled upload pipeline (`multer → diskStorage`) from the file data store. Files written here are potentially reachable via `express.static` without any authentication check. | `diskStorage` / `express.static` → DS-5 `/uploads` |
+
 ---
 [Voltar ao README](../README.md)
 
