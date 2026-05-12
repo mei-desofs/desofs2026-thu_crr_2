@@ -29,15 +29,10 @@ import RefeitorioRoutes from "./src/Routes/RefeitorioRoutes";
 import CanteenRoutes from "./src/Routes/CanteenRoutes";
 import ProducerStatisticsRoutes from "./src/Routes/ProducerStatisticsRoutes";
 import "./src/Model/associations";
-import bootstrap from "./src/Bootstrap";
 import { startMarkUnconsumedReservationsJob } from "./src/Jobs/markUnconsumedReservations";
 import { startWeeklyMenuPlanningJob } from "./src/Jobs/weeklyMenuPlanning";
 import path from "path";
-import { Menu } from "./src/Model/Menu";
-import { Order } from "./src/Model/Order";
-import { NeededProduct } from "./src/Model/NeededProduct";
-import { Notification } from "./src/Model/Notification";
-import { AverageReservation } from "./src/Model/AverageReservation";  
+import { errorHandler } from "./src/middlewares/errorHandler";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -78,6 +73,9 @@ app.use("/producer-statistics", ProducerStatisticsRoutes);
 app.get("/", (req, res) => {
   res.send("Backend TypeScript + MySQL a funcionar!");
 });
+
+// ── MT22-Solution: central error handler
+app.use(errorHandler);
 
 const startServer = async () => {
   try {
