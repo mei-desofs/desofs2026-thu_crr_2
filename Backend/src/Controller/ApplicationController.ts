@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ApplicationService } from "../Service/ApplicationService";
 import Joi from "joi";
+import { rejectNonPdfFiles } from "../utils/validatePdfMagicBytes";
 
 const service = new ApplicationService();
 
@@ -150,6 +151,11 @@ export class ApplicationController {
     const applicationId = app.id;
     const files = req.files as Express.Multer.File[] || [];
 
+    const invalidFiles = rejectNonPdfFiles(files);
+    if (invalidFiles.length > 0) {
+      return res.status(400).json({ error: "One or more files are not valid PDFs." });
+    }
+
     const fs = require("fs");
     const path = require("path");
 
@@ -184,6 +190,10 @@ static async updateApplicationWithFiles(req: Request, res: Response) {
     const existingApp = await service.getApplicationByUser(Number(req.body.userId));
 
     const files = req.files as Express.Multer.File[] || [];
+    const invalidFiles = rejectNonPdfFiles(files);
+    if (invalidFiles.length > 0) {
+      return res.status(400).json({ error: "One or more files are not valid PDFs." });
+    }
     const fs = require("fs");
     const path = require("path");
 
