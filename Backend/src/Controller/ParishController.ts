@@ -36,7 +36,7 @@ export class ParishController {
         } catch (err: any) {
             if (err.message === "PARISH_NOT_FOUND")
                 return res.status(404).json({ error: "Parish not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -49,7 +49,7 @@ export class ParishController {
             }
             return res.status(200).json(parish);
         } catch (error: any) {
-            return res.status(500).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -62,7 +62,7 @@ export class ParishController {
             }
             return res.status(200).json(parish);
         } catch (error: any) {
-            return res.status(500).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

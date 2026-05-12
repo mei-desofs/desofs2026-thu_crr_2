@@ -40,7 +40,7 @@ export class IngredientController {
         } catch (err: any) {
             if (err.message === "INGREDIENT_NOT_FOUND")
                 return res.status(404).json({ error: "Ingredient not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

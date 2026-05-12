@@ -26,7 +26,7 @@ export class StockController {
                         return res.status(404).json({ error: err.message });
                     if (err.message.startsWith("UNIT_NOT_FOUND"))
                         return res.status(404).json({ error: err.message });
-                    return res.status(500).json({ error: "Internal server error" });
+                    return res.status(500).json({ message: "Internal server error" });
             }
         }
     }
@@ -46,7 +46,7 @@ export class StockController {
         } catch (err: any) {
             if (err.message === "STOCK_NOT_FOUND")
                 return res.status(404).json({ error: "Stock not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

@@ -21,7 +21,7 @@ export class NotificationController {
             return res.status(201).json(notification);
         } catch (error: any) {
             return res.status(500).json({
-                message: error.message || "Error creating notification",
+                message: "Internal server error",
             });
         }
     }
@@ -37,9 +37,7 @@ export class NotificationController {
 
             return res.status(200).json(notification);
         } catch (error: any) {
-            return res.status(404).json({
-                message: error.message || "Notification not found",
-            });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -56,7 +54,7 @@ export class NotificationController {
             return res.status(200).json(notifications);
         } catch (error: any) {
             return res.status(500).json({
-                message: error.message || "Error fetching notifications",
+                message: "Internal server error",
             });
         }
     }

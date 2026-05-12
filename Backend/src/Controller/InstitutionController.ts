@@ -42,10 +42,7 @@ export class InstitutionController {
       const institutions = await InstitutionService.getAllInstitutions();
       return res.status(200).json(institutions);
     } catch (error: any) {
-      return res.status(500).json({
-        message: "Erro ao buscar instituições.",
-        error: error.message,
-      });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 

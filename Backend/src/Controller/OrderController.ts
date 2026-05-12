@@ -42,7 +42,7 @@ export class OrderController {
 
             return res.status(201).json(order);
         } catch (error: any) {
-            return res.status(500).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -57,7 +57,7 @@ export class OrderController {
 
             return res.status(200).json(order);
         } catch (error: any) {
-            return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -88,7 +88,7 @@ export class OrderController {
 
             return res.status(200).json(order);
         } catch (error: any) {
-            return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -102,7 +102,7 @@ export class OrderController {
                 message: "Order deleted successfully",
             });
         } catch (error: any) {
-            return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -112,7 +112,7 @@ export class OrderController {
             const orders = await OrderService.getByUserId(Number(userid));
             return res.status(200).json(orders);
         } catch (error: any) {
-            return res.status(500).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -121,7 +121,7 @@ export class OrderController {
             const orders = await OrderService.getAll();
             return res.status(200).json(orders);
         } catch (error: any) {
-            return res.status(500).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

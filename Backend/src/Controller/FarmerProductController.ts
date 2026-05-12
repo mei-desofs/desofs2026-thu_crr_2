@@ -28,7 +28,7 @@ export class FarmerProductController {
       const result = await service.createFarmerProducts(userId, applicationId, farmerProducts);
       res.json(result);
     } catch (err: any) {
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 

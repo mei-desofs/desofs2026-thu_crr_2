@@ -42,10 +42,7 @@ export class CanteenController {
       const canteens = await CanteenService.getAllCanteens();
       return res.status(200).json(canteens);
     } catch (error: any) {
-      return res.status(500).json({
-        message: "Erro ao buscar cantinas.",
-        error: error.message,
-      });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 

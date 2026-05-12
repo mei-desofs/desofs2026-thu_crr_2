@@ -28,7 +28,7 @@ export class WasteReportController {
             if (err.message === "USER_CAN_ONLY_REPORT_FOR_OWN_REFEITORIO") return res.status(403).json({ error: "You can only report waste for your own refectory" });
             if (err.message === "RESERVATION_NOT_FOUND") return res.status(404).json({ error: "Reservation not found" });
             if (err.message === "INVALID_WASTE_PERCENTAGE") return res.status(400).json({ error: "Waste percentage must be between 0 and 100" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -44,7 +44,7 @@ export class WasteReportController {
             res.status(200).json(reports);
         } catch (err: any) {
             if (err.message === "MEAL_NOT_FOUND") return res.status(404).json({ error: "Meal not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -59,7 +59,7 @@ export class WasteReportController {
             const reports = await service.getWasteReportsByDate(new Date(date as string));
             res.status(200).json(reports);
         } catch (err: any) {
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -74,7 +74,7 @@ export class WasteReportController {
             const result = await service.getWasteReportsForConsumedMeals(new Date(date as string));
             res.status(200).json(result);
         } catch (err: any) {
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -131,7 +131,7 @@ export class WasteReportController {
             const result = await service.getWasteReportStatistics(Object.keys(filter).length > 0 ? filter : undefined);
             res.status(200).json(result);
         } catch (err: any) {
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

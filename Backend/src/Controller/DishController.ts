@@ -39,7 +39,7 @@ export class DishController {
         } catch (err: any) {
             if (err.message === "DISH_NOT_FOUND")
                 return res.status(404).json({ error: "Dish not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -53,7 +53,7 @@ export class DishController {
         } catch (err: any) {
             if (err.message === "DISH_NOT_FOUND")
                 return res.status(404).json({ error: "Dish not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 

@@ -13,8 +13,7 @@ export class ProducerStatisticsController {
 
             res.status(200).json(statistics);
         } catch (error: any) {
-            console.error("Erro ao obter estatísticas de produtores:", error);
-            res.status(500).json({ error: "Erro ao obter estatísticas de produtores" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

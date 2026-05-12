@@ -25,7 +25,7 @@ export class AuxiliarController {
     } catch (err: any) {
       if (err.message === "ALLERGEN_ALREADY_EXISTS")
         return res.status(409).json({ error: "Allergen already exists" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -47,7 +47,7 @@ export class AuxiliarController {
     } catch (err: any) {
       if (err.message === "NUTRITION_TYPE_ALREADY_EXISTS")
         return res.status(409).json({ error: "Nutrition type already exists" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -69,7 +69,7 @@ export class AuxiliarController {
     } catch (err: any) {
       if (err.message === "PRODUCT_TYPE_ALREADY_EXISTS")
         return res.status(409).json({ error: "Product type already exists" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -91,7 +91,7 @@ export class AuxiliarController {
     } catch (err: any) {
       if (err.message === "UNIT_ALREADY_EXISTS")
         return res.status(409).json({ error: "Unit already exists" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -113,7 +113,7 @@ export class AuxiliarController {
       } catch (err: any) {
           if (err.message === "DISH_TYPE_ALREADY_EXISTS")
               return res.status(409).json({ error: "Dish type already exists" });
-          res.status(500).json({ error: "Internal server error" });
+          return res.status(500).json({ message: "Internal server error" });
       }
   }
 
@@ -135,7 +135,7 @@ export class AuxiliarController {
       } catch (err: any) {
           if (err.message === "MEAL_TYPE_ALREADY_EXISTS")
               return res.status(409).json({ error: "Meal type already exists" });
-          res.status(500).json({ error: "Internal server error" });
+          return res.status(500).json({ message: "Internal server error" });
       }
   }
 
@@ -157,7 +157,7 @@ export class AuxiliarController {
       } catch (err: any) {
           if (err.message === "MENU_TYPE_ALREADY_EXISTS")
               return res.status(409).json({ error: "Menu type already exists" });
-          res.status(500).json({ error: "Internal server error" });
+          return res.status(500).json({ message: "Internal server error" });
       }
   }
 
@@ -171,7 +171,7 @@ export class AuxiliarController {
       const result = await service.listOrderedSuppliers();
       res.json(result);
     } catch (err: any) {
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
 }
 }

@@ -48,7 +48,7 @@ export class ApplicationController {
     } catch (err: any) {
       if (err.message === "APPLICATION_ALREADY_EXISTS")
         return res.status(409).json({ error: "User already has an application" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -62,7 +62,7 @@ export class ApplicationController {
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -98,7 +98,7 @@ export class ApplicationController {
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -111,7 +111,7 @@ export class ApplicationController {
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -124,7 +124,7 @@ export class ApplicationController {
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -171,7 +171,7 @@ export class ApplicationController {
     console.error(err);
     if (err.message === "APPLICATION_ALREADY_EXISTS")
       return res.status(409).json({ error: "User already has an application" });
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 }
 
@@ -213,7 +213,7 @@ static async updateApplicationWithFiles(req: Request, res: Response) {
     console.error(err);
     if (err.message === "APPLICATION_NOT_FOUND")
       return res.status(404).json({ error: "Application not found" });
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 }
 
