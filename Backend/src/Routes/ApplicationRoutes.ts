@@ -2,6 +2,7 @@ import { Router } from "express";
 import { ApplicationController } from "../Controller/ApplicationController";
 import multer from "multer";
 import path from "path";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 // Configuração do multer para PDFs com nomes únicos
 const storage = multer.diskStorage({
@@ -36,7 +37,8 @@ router.put("/:applicationId", upload.array("documents"), ApplicationController.u
 router.get("/", ApplicationController.listApplications);
 
 // Get document of one application
-router.get('/:applicationId/documents/:filename', ApplicationController.getDocument);
+// MT14-Solution: authenticated route - only logged-in users can fetch documents (R4)
+router.get('/:applicationId/documents/:filename', authMiddleware, ApplicationController.getDocument);
 
 // Obter aplicação por userId
 router.get("/user/:userId", ApplicationController.getApplicationByUser);

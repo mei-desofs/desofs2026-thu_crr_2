@@ -80,10 +80,30 @@ export class ApplicationController {
     if (filename == null || filename.length == 0) {
       return res.status(400).json({ error: "Invalid filename" });
     }
-
-    const filePath: string = await service
-      .getFilePathByApplicationIdAndFileName(applicationId, filename);
-    return res.sendFile(filePath);
+ 
+    try {
+      // MT14-Solution: ownership check (R4)
+      // Only the Visitor who owns the application, or a NetworkManager, can access documents.
+      const requestingUser = (req as any).user;
+      const isNetworkManager = requestingUser.role === "NetworkManager";
+ 
+      if (!isNetworkManager) {
+        const app = await service.getApplicationByUser(requestingUser.id);
+        const isOwner = app && Number(app.id) === applicationId;
+        if (!isOwner) {
+          return res.status(403).json({ error: "Access denied" });
+        }
+      }
+ 
+      const filePath: string = await service
+        .getFilePathByApplicationIdAndFileName(applicationId, filename);
+      return res.sendFile(filePath);
+    } catch (err: any) {
+      if (err.message === "APPLICATION_NOT_FOUND")
+        return res.status(404).json({ error: "Application not found" });
+      console.error("Error fetching document:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
 
   static async updateApplication(req: Request, res: Response) {
