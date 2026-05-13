@@ -69,7 +69,6 @@ app.use("/waste-reports", WasteReportRoutes);
 app.use("/notifications", NotificationRoutes);
 app.use("/needed-products", neededProductRoutes);
 app.use("/orders", orderRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/parishes", ParishRoutes);
 app.use("/institutions", InstitutionRoutes);
 app.use("/refeitorios", RefeitorioRoutes);
