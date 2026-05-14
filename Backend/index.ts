@@ -49,7 +49,8 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
+// MT19-Solution: explicit JSON body size limit (R8 — DoS via huge payloads)
+app.use(express.json({ limit: "1mb" }));
 app.use("/users", userRoutes);
 app.use("/auxiliar", auxiliarRoutes);
 app.use("/products", productRoutes);
@@ -69,7 +70,6 @@ app.use("/waste-reports", WasteReportRoutes);
 app.use("/notifications", NotificationRoutes);
 app.use("/needed-products", neededProductRoutes);
 app.use("/orders", orderRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/parishes", ParishRoutes);
 app.use("/institutions", InstitutionRoutes);
 app.use("/refeitorios", RefeitorioRoutes);
