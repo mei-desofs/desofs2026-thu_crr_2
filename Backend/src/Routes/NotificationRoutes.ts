@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { NotificationController } from "../Controller/NotificationController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 // criar notificação
 router.post("/", NotificationController.create);

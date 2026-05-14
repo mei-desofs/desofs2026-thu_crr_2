@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { ParishController } from "../Controller/ParishController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 // CRUD Products
 router.post("/", ParishController.createParish);

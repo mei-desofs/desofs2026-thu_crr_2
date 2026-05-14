@@ -2,9 +2,10 @@ import { Router } from "express";
 import { CanteenController } from "../Controller/CanteenController";
 import { ReservationQuantitiesCanteenController } from "../Controller/ReservationQuantitiesCanteenController";
 import { authMiddleware } from "../middlewares/authMiddleware";
-import { authorizeRoles } from "../middlewares/authorizeRoles";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 router.post("/", CanteenController.createCanteen);
 router.get("/", CanteenController.getAllCanteens);

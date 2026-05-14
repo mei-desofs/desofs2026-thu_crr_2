@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { DishController } from "../Controller/DishController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 // CRUD Products
 router.post("/", DishController.createDish);

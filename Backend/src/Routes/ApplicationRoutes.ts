@@ -27,6 +27,8 @@ const upload = multer({
 
 const router = Router();
 
+router.use(authMiddleware);
+
 // Criar nova aplicação com FarmerProducts e documentos PDF
 router.post("/", upload.array("documents"), ApplicationController.createApplicationWithFiles);
 
@@ -38,7 +40,7 @@ router.get("/", ApplicationController.listApplications);
 
 // Get document of one application
 // MT14-Solution: authenticated route - only logged-in users can fetch documents (R4)
-router.get('/:applicationId/documents/:filename', authMiddleware, ApplicationController.getDocument);
+router.get('/:applicationId/documents/:filename', ApplicationController.getDocument);
 
 // Obter aplicação por userId
 router.get("/user/:userId", ApplicationController.getApplicationByUser);

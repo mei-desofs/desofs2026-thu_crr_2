@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { AuxiliarController } from "../Controller/AuxiliarController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 // Units
 router.post("/unit", AuxiliarController.createUnit);

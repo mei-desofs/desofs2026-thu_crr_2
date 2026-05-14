@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { MealController } from "../Controller/MealController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 // CRUD Products
 router.post("/", MealController.createMeal);

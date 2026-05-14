@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { OrderController } from "../Controller/OrderController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 router.post("/", OrderController.create);
 router.put("/:id", OrderController.update);
