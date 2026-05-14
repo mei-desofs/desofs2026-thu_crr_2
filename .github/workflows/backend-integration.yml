@@ -1,6 +1,8 @@
 name: Backend Integration Tests
 
 on:
+  push:
+    branches: [add-pipelines]
   pull_request:
     branches: [ main ]
 
