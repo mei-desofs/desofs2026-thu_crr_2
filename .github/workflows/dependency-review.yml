@@ -1,8 +1,6 @@
 name: Dependency Review
 
 on:
-  push:
-    branches: [add-pipelines]
   pull_request:
     branches: [ main ]
 
