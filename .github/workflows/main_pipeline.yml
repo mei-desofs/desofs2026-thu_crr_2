@@ -90,7 +90,7 @@ jobs:
         run: npm run build
 
       - name: Run unit tests with coverage
-        run: npm run test:unit -- --coverage --coverageReporters=lcov --coverageReporters=text
+        run: npm run test:unit -- --coverage
         env:
           NODE_ENV: test
           JWT_SECRET: test_secret
