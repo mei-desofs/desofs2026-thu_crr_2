@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { CanteenController } from "../Controller/CanteenController";
 import { ReservationQuantitiesCanteenController } from "../Controller/ReservationQuantitiesCanteenController";
-import { authMiddleware } from "../middlewares/authMiddleware";
-import { authorizeRoles } from "../middlewares/authorizeRoles";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(apiRateLimiter);
+router.use(authMiddleware);
 
 router.post("/", CanteenController.createCanteen);
 router.get("/", CanteenController.getAllCanteens);
