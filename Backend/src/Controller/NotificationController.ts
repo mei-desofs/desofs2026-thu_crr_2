@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { NotificationService } from "../Service/notificationService";
+import { NotificationService } from "../Service/NotificationService";
 
 export class NotificationController {
     static async create(req: Request, res: Response) {
@@ -35,9 +35,17 @@ export class NotificationController {
                 Number(id)
             );
 
+            if (!notification) {
+                return res.status(404).json({
+                    message: "Notification not found",
+                });
+            }
+
             return res.status(200).json(notification);
         } catch (error: any) {
-            return res.status(500).json({ message: "Internal server error" });
+            return res.status(500).json({
+                message: "Internal server error",
+            });
         }
     }
 

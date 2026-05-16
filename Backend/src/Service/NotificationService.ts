@@ -14,7 +14,7 @@ export class NotificationService {
         const notification = await Notification.findByPk(notificationId);
 
         if (!notification) {
-            throw new Error("Notification not found");
+            return null;
         }
 
         if (notification.status === "seen") {
