@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 
+function sanitizeForLog(value: string): string {
+  // Strip CR/LF to prevent log injection (newline injection attacks)
+  return value.replace(/[\r\n]/g, "");
+}
+
 /**
  * MT22-Solution — Central error handler (R3 mitigation)
  *
@@ -17,8 +22,12 @@ export function errorHandler(
 ): void {
   const isDev = process.env.NODE_ENV !== "production";
 
+  const method = sanitizeForLog(req.method);
+  const path = sanitizeForLog(req.path);
+
   // Always log the full detail server-side
-  console.error(`[${new Date().toISOString()}] Unhandled error on ${req.method} ${req.path}:`, err);
+  // Uses %s format specifiers instead of template literals to avoid format string injection
+  console.error("[%s] Unhandled error on %s %s:", new Date().toISOString(), method, path, err);
 
   if (res.headersSent) return;
 
