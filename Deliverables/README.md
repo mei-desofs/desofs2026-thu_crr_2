@@ -74,5 +74,8 @@
 ### Automation
 [Ver documento](Phase_2/automation.md)
 
+### Mitigations implemented
+[Ver documento](Phase_2/mitigations_fixed.md)
+
 ### ASVS
 [Ver documento](Phase_2/ASVS.md)
