@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { ReservationController } from "../Controller/ReservationController";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(apiRateLimiter);
+router.use(authMiddleware);
 
 router.post("/", ReservationController.createReservation);
 router.get("/", ReservationController.listReservations);
