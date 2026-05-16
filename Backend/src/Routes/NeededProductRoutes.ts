@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { NeededProductController } from "../Controller/NeededProductController";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
 
+router.use(apiRateLimiter);
 router.use(authMiddleware);
 
 router.post("/", NeededProductController.create);

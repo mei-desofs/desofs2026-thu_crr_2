@@ -2,7 +2,7 @@ import { Router } from "express";
 import { ApplicationController } from "../Controller/ApplicationController";
 import multer from "multer";
 import path from "path";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 // Configuração do multer para PDFs com nomes únicos
 const storage = multer.diskStorage({
@@ -27,6 +27,7 @@ const upload = multer({
 
 const router = Router();
 
+router.use(apiRateLimiter);
 router.use(authMiddleware);
 
 // Criar nova aplicação com FarmerProducts e documentos PDF

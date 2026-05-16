@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { WasteReportController } from "../Controller/WasteReportController";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
 
+router.use(apiRateLimiter);
 router.use(authMiddleware);
 
 router.post("/", WasteReportController.createWasteReport);

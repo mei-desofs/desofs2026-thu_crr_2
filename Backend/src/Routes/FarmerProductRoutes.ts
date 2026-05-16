@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { FarmerProductController } from "../Controller/FarmerProductController";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
 
+router.use(apiRateLimiter);
 router.use(authMiddleware);
 
 // Criar produtos do agricultor para uma aplicação

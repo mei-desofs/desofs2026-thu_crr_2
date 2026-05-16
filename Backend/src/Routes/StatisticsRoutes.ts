@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { StatisticsController } from "../Controller/StatisticsController";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
 
+router.use(apiRateLimiter);
 router.use(authMiddleware);
 
 // CRUD Products
