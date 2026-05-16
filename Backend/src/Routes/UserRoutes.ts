@@ -1,12 +1,16 @@
 import { Router } from "express";
 import { UserController } from "../Controller/UserController";
-import { authMiddleware } from "../middlewares/authMiddleware";
-import { authorizeRoles } from "../middlewares/authorizeRoles";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
 
+router.use(apiRateLimiter);
+
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);
+
+router.use(authMiddleware);
+
 router.get("/:id", UserController.getById);
 
 router.patch("/startQuarantine/:id", UserController.startQuarantine);

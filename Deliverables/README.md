@@ -62,3 +62,17 @@
 [Ver documento](Phase_1/security_testing.md)
 
 ---
+
+## Artefactos da Fase 2
+
+### Group Practices
+[Ver documento](Phase_2/group_practices.md)
+
+### Code Reviews
+[Ver documento](Phase_2/code_reviews.md)
+
+### Automation
+[Ver documento](Phase_2/automation.md)
+
+### ASVS
+[Ver documento](Phase_2/ASVS.md)

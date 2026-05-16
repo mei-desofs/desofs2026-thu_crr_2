@@ -2,6 +2,8 @@ import { Router } from "express";
 import { ApplicationController } from "../Controller/ApplicationController";
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
+import path from "path";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 // Configuração do multer para PDFs com nomes únicos
 const storage = multer.diskStorage({
@@ -26,6 +28,9 @@ const upload = multer({
 
 const router = Router();
 
+router.use(apiRateLimiter);
+router.use(authMiddleware);
+
 // Criar nova aplicação com FarmerProducts e documentos PDF
 router.post("/", upload.array("documents"), ApplicationController.createApplicationWithFiles);
 
@@ -36,6 +41,7 @@ router.put("/:applicationId", upload.array("documents"), ApplicationController.u
 router.get("/", ApplicationController.listApplications);
 
 // Get document of one application
+// MT14-Solution: authenticated route - only logged-in users can fetch documents (R4)
 router.get('/:applicationId/documents/:filename', ApplicationController.getDocument);
 
 // Obter aplicação por userId

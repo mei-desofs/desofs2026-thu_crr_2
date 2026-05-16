@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { OrderController } from "../Controller/OrderController";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(apiRateLimiter);
+router.use(authMiddleware);
 
 router.post("/", OrderController.create);
 router.put("/:id", OrderController.update);

@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { StockController } from "../Controller/StockController";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(apiRateLimiter);
+router.use(authMiddleware);
 
 // CRUD Products
 router.post("/", StockController.createStock);
