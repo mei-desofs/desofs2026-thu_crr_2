@@ -1,10 +1,11 @@
 import type { Request } from "express";
 
-// M25 — Mitigação R5: logs sem dados sensíveis do pedido (não registar `req.body` completo em produção).
+// MT25 — não registar `req.body` completo em produção; só identificadores (chaves/params).
 export function logRequestIdentifiers(
   tag: string,
   req: Pick<Request, "method" | "path" | "originalUrl" | "params" | "body">,
 ): void {
+  if (!isNonProduction()) return;
   const path = req.originalUrl || req.path || "";
   let bodyKeys: string;
   if (req.body === null || req.body === undefined) {
