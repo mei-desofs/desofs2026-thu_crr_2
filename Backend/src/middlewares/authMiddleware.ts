@@ -10,6 +10,17 @@ export const apiRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+/** MT10 — brute-force: limite restrito só em POST /login (por IP). */
+export const loginRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    message: "Demasiadas tentativas de login. Tente novamente mais tarde.",
+  },
+});
+
 const SECRET_KEY = process.env.JWT_SECRET;
 
 if (!SECRET_KEY) {

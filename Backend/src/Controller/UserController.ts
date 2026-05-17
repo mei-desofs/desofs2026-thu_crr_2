@@ -64,8 +64,8 @@ export class UserController {
         user,
         token,
       });
-    } catch (err: any) {
-      res.status(400).json({ message: err.message || "Erro ao fazer login" });
+    } catch {
+      res.status(401).json({ message: "Credenciais inválidas." });
     }
   }
 

@@ -1,13 +1,17 @@
 import { Router } from "express";
 import { UserController } from "../Controller/UserController";
-import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
+import {
+  apiRateLimiter,
+  authMiddleware,
+  loginRateLimiter,
+} from "../middlewares/authMiddleware";
 
 const router = Router();
 
 router.use(apiRateLimiter);
 
 router.post("/register", UserController.register);
-router.post("/login", UserController.login);
+router.post("/login", loginRateLimiter, UserController.login);
 
 router.use(authMiddleware);
 
