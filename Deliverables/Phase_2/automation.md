@@ -15,9 +15,7 @@ The pipeline includes security checks, dependency analysis, vulnerability auditi
 
 The pipeline is defined in the following file:
 
-```text
-.github/workflows/main_pipeline.yml
-```
+[.github/workflows/main_pipeline.yml](../../.github/workflows/main_pipeline.yml)
 
 The pipeline is automatically triggered whenever a *Pull Request* targeting the `main` branch is created or updated.
 
