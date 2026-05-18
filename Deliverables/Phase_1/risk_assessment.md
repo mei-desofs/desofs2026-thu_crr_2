@@ -14,7 +14,7 @@ For this section, "**ISO 31000:2018** - *Risk management - Guidelines*" was adop
 
 Reference: [ISO 31000:2018](https://studylib.net/doc/26126608/iso-31000?p=13).
 
-![matrixforiskassessment.png](../images/matrixforiskassessment.png)
+![matrixforiskassessment.png](assets/matrixforiskassessment.png)
 
 The **5×5 matrix** illustrated above is used to combine **Impact** and **Likelihood** and determine the **risk level** for each scenario, consistent with the usual style of representation in risk assessment under ISO 31000.
 

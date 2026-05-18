@@ -10,7 +10,16 @@ export const apiRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-//mt7 — único módulo/variável de ambiente para assinar e verificar JWT
+export const loginRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    message: "Demasiadas tentativas de login. Tente novamente mais tarde.",
+  },
+});
+
 const secret = process.env.JWT_SECRET;
 if (!secret) {
   throw new Error("JWT_SECRET não definido no .env");

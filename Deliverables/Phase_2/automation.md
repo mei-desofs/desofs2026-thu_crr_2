@@ -350,7 +350,7 @@ The pipeline was organized sequentially to ensure that only secure and functiona
 
 ## Pipeline Flow
 
-![Jobs.png](../images/Jobs.png)
+![Jobs.png](../Phase_1/assets/Jobs.png)
 ---
 
 # Technologies Used

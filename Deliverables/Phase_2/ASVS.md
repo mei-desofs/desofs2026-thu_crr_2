@@ -26,4 +26,4 @@ Risk (R#) → Mitigation (MT#) → ASVS (V#.#.#) → Pull Request (URL) → Miti
 ```
 Evidence excel example:
 
-![img.png](../images/excel_evidence.png)
+![img.png](../Phase_1/assets/excel_evidence.png)
