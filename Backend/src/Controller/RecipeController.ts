@@ -36,7 +36,7 @@ export class RecipeController {
         } catch (err: any) {
             if (err.message === "RECIPE_NOT_FOUND")
                 return res.status(404).json({ error: "Recipe not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

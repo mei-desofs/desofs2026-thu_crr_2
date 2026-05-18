@@ -42,7 +42,7 @@ export class MealController {
         } catch (err: any) {
             if (err.message === "MEAL_NOT_FOUND")
                 return res.status(404).json({ error: "Meal not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -60,7 +60,7 @@ export class MealController {
             const statistics = await service.getCanteenStatistics(canteenId, filter);
             res.json(statistics);
         } catch (err: any) {
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

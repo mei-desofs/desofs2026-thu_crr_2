@@ -42,7 +42,8 @@ export class UserController {
         canteenId: user.canteenId 
       });
     } catch (err) {
-      return res.status(500).json({ message: "Erro ao criar utilizador.", error: err });
+      console.error("Error creating user:", err);
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -63,8 +64,8 @@ export class UserController {
         user,
         token,
       });
-    } catch {
-      res.status(401).json({ message: "Credenciais inválidas." });
+    } catch (err: any) {
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -77,7 +78,7 @@ export class UserController {
       }
       return res.status(200).json(user);
     } catch (error: any) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -90,7 +91,7 @@ export class UserController {
       }
       return res.status(200).json({ message: "Quarentena iniciada com sucesso.", user });
     } catch (error: any) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -103,7 +104,7 @@ export class UserController {
       }
       return res.status(200).json({ message: "Quarentena iniciada com sucesso.", user });
     } catch (error: any) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }

@@ -23,10 +23,7 @@ export class RefeitorioController {
         refeitorio,
       });
     } catch (error: any) {
-      return res.status(500).json({
-        message: "Erro ao criar refeitório.",
-        error: error.message,
-      });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -35,10 +32,7 @@ export class RefeitorioController {
       const refeitorios = await RefeitorioService.getAllRefeitorios();
       return res.status(200).json(refeitorios);
     } catch (error: any) {
-      return res.status(500).json({
-        message: "Erro ao buscar refeitórios.",
-        error: error.message,
-      });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -51,10 +45,7 @@ export class RefeitorioController {
       if (error.message === "REFEITORIO_NOT_FOUND") {
         return res.status(404).json({ message: "Refeitório não encontrado." });
       }
-      return res.status(500).json({
-        message: "Erro ao buscar refeitório.",
-        error: error.message,
-      });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }

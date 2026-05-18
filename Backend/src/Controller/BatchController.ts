@@ -38,7 +38,7 @@ export class BatchController {
         } catch (err: any) {
             if (err.message === "BATCH_NOT_FOUND")
                 return res.status(404).json({ error: "Batch not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

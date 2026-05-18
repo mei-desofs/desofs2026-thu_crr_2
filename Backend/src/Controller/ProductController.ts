@@ -26,7 +26,7 @@ export class ProductController {
             return res.status(404).json({ error: err.message });
           if (err.message.startsWith("ALLERGEN_NOT_FOUND"))
             return res.status(404).json({ error: err.message });
-          return res.status(500).json({ error: "Internal server error" });
+          return res.status(500).json({ message: "Internal server error" });
       }
     }
   }
@@ -46,7 +46,7 @@ export class ProductController {
     } catch (err: any) {
       if (err.message === "PRODUCT_NOT_FOUND")
         return res.status(404).json({ error: "Product not found" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }

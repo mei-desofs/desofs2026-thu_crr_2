@@ -33,7 +33,7 @@ export class MenuController {
                 case "MEAL_CANTEEN_MISMATCH":
                     return res.status(400).json({ error: "Uma ou mais meals não pertencem à cantina especificada" });
                 default:
-                    return res.status(500).json({ error: err.message || "Internal server error" });
+                    return res.status(500).json({ message: "Internal server error" });
             }
         }
     }
@@ -53,7 +53,7 @@ export class MenuController {
         } catch (err: any) {
             if (err.message === "MENU_NOT_FOUND")
                 return res.status(404).json({ error: "Menu not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -75,7 +75,7 @@ export class MenuController {
             if (err.message === "MENU_NOT_FOUND") {
                 return res.status(404).json({ error: "Menu not found" });
             }
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -93,7 +93,7 @@ export class MenuController {
             if (err.message === "MENU_NOT_FOUND") {
                 return res.status(404).json({ error: "Menu not found" });
             }
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -105,7 +105,7 @@ export class MenuController {
             res.json(menus);
         }
         catch (err: any) {
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

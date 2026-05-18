@@ -68,7 +68,7 @@ export class ApplicationController {
     } catch (err: any) {
       if (err.message === "APPLICATION_ALREADY_EXISTS")
         return res.status(409).json({ error: "User already has an application" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -82,7 +82,7 @@ export class ApplicationController {
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -125,6 +125,7 @@ export class ApplicationController {
       return res.status(500).json({ message: "Internal server error" });
     }
   }
+  
 
   static async updateApplication(req: Request, res: Response) {
     const applicationId = Number(req.params.applicationId);
@@ -138,7 +139,7 @@ export class ApplicationController {
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -151,7 +152,7 @@ export class ApplicationController {
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
@@ -164,102 +165,100 @@ export class ApplicationController {
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
   static async createApplicationWithFiles(req: Request, res: Response) {
-    try {
-      const { userId, businessEmail, businessPhone, name, location, freguesia, municipio, supplierComment, farmerProducts } = req.body;
+  try {
+    const { userId, businessEmail, businessPhone, name, location, freguesia, municipio, supplierComment, farmerProducts } = req.body;
 
-      // Create application first without files
-      const app = await service.createApplication({
-        userId,
-        businessEmail,
-        businessPhone,
-        name,
-        location,
-        freguesia,
-        municipio,
-        supplierComment,
-        documentsSubmitted: [],
-        farmerProducts: JSON.parse(farmerProducts)
-      });
+    // Criar aplicação **primeiro** sem ficheiros
+    const app = await service.createApplication({
+      userId,
+      businessEmail,
+      businessPhone,
+      name,
+      location,
+      freguesia,
+      municipio,
+      supplierComment,
+      documentsSubmitted: [],  // 🔹 inicializar vazio
+      farmerProducts: JSON.parse(farmerProducts)
+    });
 
-      if (!app) return res.status(500).json({ error: "Failed to create application" });
-      const applicationId = app.id;
-      const files = req.files as Express.Multer.File[] || [];
+    if (!app) return res.status(500).json({ error: "Failed to create application" });
+    const applicationId = app.id;
+    const files = req.files as Express.Multer.File[] || [];
 
-      const invalidFiles = rejectNonPdfFiles(files);
-      if (invalidFiles.length > 0) {
-        return res.status(400).json({ error: "One or more files are not valid PDFs." });
+    // Renomear ficheiros com userId-applicationId-nomeOriginal
+    const uploadsRoot = path.resolve("uploads");
+    const safeUserId = sanitizeFilename(String(userId));
+    const documents = files.map(f => {
+      const safeOriginalName = sanitizeFilename(f.originalname);
+      const newFilename = `${safeUserId}-${applicationId}-${safeOriginalName}`;
+      const newPath = path.resolve(uploadsRoot, newFilename);
+
+      if (!newPath.startsWith(uploadsRoot + path.sep)) {
+        throw new Error("INVALID_UPLOAD_PATH");
       }
 
-      const documents = files.map(f => {
-        const { newPath } = buildSafeFilePath(`${userId}-${applicationId}`, f.originalname);
-        const safeName = sanitizeFilename(f.originalname);
-        fs.renameSync(f.path, newPath);
-        return { filename: safeName, path: newPath };
-      });
+      fs.renameSync(f.path, newPath); // mover/renomear ficheiro
 
-      // Update application with the uploaded documents
-      const updatedApp = await service.updateApplication(applicationId, { documentsSubmitted: documents });
+      return { filename: f.originalname, path: path.join("uploads", newFilename) };
+    });
 
-      res.status(201).json(updatedApp);
-    } catch (err: any) {
-      console.error(err);
-      if (err.message === "APPLICATION_ALREADY_EXISTS")
-        return res.status(409).json({ error: "User already has an application" });
-      if (err.message === "INVALID_FILENAME" || err.message === "INVALID_FILE_PATH")
-        return res.status(400).json({ error: "Invalid file name." });
-      res.status(500).json({ error: "Internal server error" });
-    }
+    // Atualizar aplicação com documentos
+    const updatedApp = await service.updateApplication(applicationId, { documentsSubmitted: documents });
+
+    res.status(201).json(updatedApp);
+  } catch (err: any) {
+    console.error(err);
+    if (err.message === "APPLICATION_ALREADY_EXISTS")
+      return res.status(409).json({ error: "User already has an application" });
+    return res.status(500).json({ message: "Internal server error" });
   }
+}
 
-  static async updateApplicationWithFiles(req: Request, res: Response) {
-    try {
-      const applicationId = Number(req.params.applicationId);
-      if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
+static async updateApplicationWithFiles(req: Request, res: Response) {
+  try {
+    const applicationId = Number(req.params.applicationId);
+    if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
 
-      // Fetch existing application
-      const existingApp = await service.getApplicationByUser(Number(req.body.userId));
+    // Buscar aplicação existente
+    const existingApp = await service.getApplicationByUser(Number(req.body.userId));
 
-      const files = req.files as Express.Multer.File[] || [];
-      const invalidFiles = rejectNonPdfFiles(files);
-      if (invalidFiles.length > 0) {
-        return res.status(400).json({ error: "One or more files are not valid PDFs." });
-      }
+    const files = req.files as Express.Multer.File[] || [];
+    const fs = require("fs");
+    const path = require("path");
 
-      const newDocuments = files.map(f => {
-        const { newPath } = buildSafeFilePath(`${existingApp.userId}-${applicationId}`, f.originalname);
-        const safeName = sanitizeFilename(f.originalname);
-        fs.renameSync(f.path, newPath);
-        return { filename: safeName, path: newPath };
-      });
+    const newDocuments = files.map(f => {
+      const newFilename = `${existingApp.userId}-${applicationId}-${f.originalname}`;
+      const newPath = path.join("uploads", newFilename);
+      fs.renameSync(f.path, newPath);
+      return { filename: f.originalname, path: newPath };
+    });
 
-      const documentsSubmitted = existingApp.documentsSubmitted
-        ? [...existingApp.documentsSubmitted, ...newDocuments]
-        : newDocuments;
+    const documentsSubmitted = existingApp.documentsSubmitted
+      ? [...existingApp.documentsSubmitted, ...newDocuments]
+      : newDocuments;
 
-      const bodyData = {
-        ...req.body,
-        farmerProducts: JSON.parse(req.body.farmerProducts),
-        documentsSubmitted
-      };
+    const bodyData = {
+      ...req.body,
+      farmerProducts: JSON.parse(req.body.farmerProducts),
+      documentsSubmitted
+    };
 
-      const { error } = applicationSchema.validate(bodyData);
-      if (error) return res.status(400).json({ error: error.message });
+    const { error } = applicationSchema.validate(bodyData);
+    if (error) return res.status(400).json({ error: error.message });
 
-      const updatedApp = await service.updateApplication(applicationId, bodyData);
-      res.json(updatedApp);
-    } catch (err: any) {
-      console.error(err);
-      if (err.message === "APPLICATION_NOT_FOUND")
-        return res.status(404).json({ error: "Application not found" });
-      if (err.message === "INVALID_FILENAME" || err.message === "INVALID_FILE_PATH")
-        return res.status(400).json({ error: "Invalid file name." });
-      res.status(500).json({ error: "Internal server error" });
-    }
+    const updatedApp = await service.updateApplication(applicationId, bodyData);
+    res.json(updatedApp);
+  } catch (err: any) {
+    console.error(err);
+    if (err.message === "APPLICATION_NOT_FOUND")
+      return res.status(404).json({ error: "Application not found" });
+    return res.status(500).json({ message: "Internal server error" });
   }
-
+}
 }

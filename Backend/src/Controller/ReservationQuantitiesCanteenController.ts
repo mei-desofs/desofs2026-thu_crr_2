@@ -39,7 +39,7 @@ export class ReservationQuantitiesCanteenController {
             res.json(statistics);
         } catch (err: any) {
             console.error("Erro ao buscar estatísticas de produção:", err);
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -87,7 +87,7 @@ export class ReservationQuantitiesCanteenController {
             res.json(statistics);
         } catch (err: any) {
             console.error("Erro ao buscar estatísticas de ingredientes:", err);
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

@@ -65,7 +65,7 @@ export class PerformanceController {
             res.json(result);
         } catch (err: any) {
             console.error("Error calculating waste percentage:", err);
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

@@ -23,7 +23,7 @@ export class NeededProductController {
 
             return res.status(201).json(neededProduct);
         } catch (error: any) {
-            return res.status(500).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -38,7 +38,7 @@ export class NeededProductController {
 
             return res.status(200).json(neededProduct);
         } catch (error: any) {
-            return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -52,7 +52,7 @@ export class NeededProductController {
                 message: "NeededProduct deleted successfully",
             });
         } catch (error: any) {
-            return res.status(404).json({ message: error.message });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 }

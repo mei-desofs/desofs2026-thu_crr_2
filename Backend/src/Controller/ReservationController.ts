@@ -39,7 +39,7 @@ export class ReservationController {
             if (err.message === "MEAL_NOT_FOUND") return res.status(404).json({ error: "Meal not found" });
             if (err.message === "USER_NOT_FOUND") return res.status(404).json({ error: "User not found" });
             if (err.message === "REFEITORIO_NOT_FOUND") return res.status(404).json({ error: "Refeitório not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -63,7 +63,7 @@ export class ReservationController {
         } catch (err: any) {
             if (err.message === "RESERVATION_NOT_FOUND")
                 return res.status(404).json({ error: "Reservation not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -80,7 +80,7 @@ export class ReservationController {
         } catch (err: any) {
             if (err.message === "RESERVATION_NOT_FOUND")
                 return res.status(404).json({ error: "Reservation not found" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
@@ -101,7 +101,7 @@ export class ReservationController {
                 return res.status(400).json({ error: "Reservation is not active" });
             if (err.message === "INVALID_QUANTITY")
                 return res.status(400).json({ error: "Invalid quantity" });
-            res.status(500).json({ error: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 
