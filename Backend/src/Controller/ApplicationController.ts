@@ -125,6 +125,7 @@ export class ApplicationController {
       return res.status(500).json({ message: "Internal server error" });
     }
   }
+  
 
   static async updateApplication(req: Request, res: Response) {
     const applicationId = Number(req.params.applicationId);
@@ -213,6 +214,7 @@ export class ApplicationController {
       return res.status(409).json({ error: "User already has an application" });
     return res.status(500).json({ message: "Internal server error" });
   }
+}
 
 static async updateApplicationWithFiles(req: Request, res: Response) {
   try {
@@ -254,5 +256,5 @@ static async updateApplicationWithFiles(req: Request, res: Response) {
       return res.status(404).json({ error: "Application not found" });
     return res.status(500).json({ message: "Internal server error" });
   }
-
+}
 }
