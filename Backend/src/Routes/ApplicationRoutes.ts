@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ApplicationController } from "../Controller/ApplicationController";
 import multer from "multer";
+import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
@@ -10,8 +11,8 @@ const storage = multer.diskStorage({
     cb(null, "uploads/"); // pasta onde os PDFs serão guardados
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname)); // nome único
+    // MT15-Solution: unpredictable UUID filename - no extension to avoid type guessing (R4)
+    cb(null, uuidv4());
   },
 });
 
