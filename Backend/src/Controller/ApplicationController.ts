@@ -191,17 +191,21 @@ export class ApplicationController {
     const applicationId = app.id;
     const files = req.files as Express.Multer.File[] || [];
 
-    const fs = require("fs");
-    const path = require("path");
-
     // Renomear ficheiros com userId-applicationId-nomeOriginal
+    const uploadsRoot = path.resolve("uploads");
+    const safeUserId = sanitizeFilename(String(userId));
     const documents = files.map(f => {
-      const newFilename = `${userId}-${applicationId}-${f.originalname}`;
-      const newPath = path.join("uploads", newFilename);
+      const safeOriginalName = sanitizeFilename(f.originalname);
+      const newFilename = `${safeUserId}-${applicationId}-${safeOriginalName}`;
+      const newPath = path.resolve(uploadsRoot, newFilename);
+
+      if (!newPath.startsWith(uploadsRoot + path.sep)) {
+        throw new Error("INVALID_UPLOAD_PATH");
+      }
 
       fs.renameSync(f.path, newPath); // mover/renomear ficheiro
 
-      return { filename: f.originalname, path: newPath };
+      return { filename: f.originalname, path: path.join("uploads", newFilename) };
     });
 
     // Atualizar aplicação com documentos
