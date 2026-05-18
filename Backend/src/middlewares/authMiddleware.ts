@@ -10,7 +10,6 @@ export const apiRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-/** MT10 — brute-force: limite restrito só em POST /login (por IP). */
 export const loginRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
@@ -21,11 +20,11 @@ export const loginRateLimiter = rateLimit({
   },
 });
 
-const SECRET_KEY = process.env.JWT_SECRET;
-
-if (!SECRET_KEY) {
+const secret = process.env.JWT_SECRET;
+if (!secret) {
   throw new Error("JWT_SECRET não definido no .env");
 }
+export const jwtSecret = secret;
 
 export const authMiddleware = (
   req: Request,
@@ -40,7 +39,7 @@ export const authMiddleware = (
   }
 
   try {
-    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+    const decoded = jwt.verify(token, jwtSecret) as JwtPayload; //mt7
 
     // Garantir que id e role existem
     if (!decoded.id || !decoded.role) {
