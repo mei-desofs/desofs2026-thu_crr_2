@@ -88,6 +88,8 @@ A Pull Request is only eligible to be merged into the `main` branch when it meet
 
 <img width="1221" height="1894" alt="Screenshot From 2026-05-18 19-25-54" src="https://github.com/user-attachments/assets/73090a75-ff98-4da4-92d6-1f606fd34647" />
 
+<img width="1216" height="1732" alt="image" src="https://github.com/user-attachments/assets/d56b709c-cf4b-4fab-8fb9-67677dbf9e33" />
+
 
 ---
 [Back to README](../README.md)
