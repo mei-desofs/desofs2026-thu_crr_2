@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../Service/UserService";
 import jwt from "jsonwebtoken";
-
-const SECRET_KEY = process.env.SECRET_KEY || "minha_chave_secreta";
+import { jwtSecret } from "../middlewares/authMiddleware"; //mt7
 
 export class UserController {
   static async register(req: Request, res: Response) {
@@ -56,7 +55,7 @@ export class UserController {
 
       const token = jwt.sign(
         { id: user.id, role: user.role },
-        SECRET_KEY,
+        jwtSecret, //mt7
         { expiresIn: "1d" }
       );
 

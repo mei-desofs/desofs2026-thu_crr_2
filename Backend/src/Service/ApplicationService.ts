@@ -134,9 +134,11 @@ export class ApplicationService {
      await User.update({ role: "Supplier" }, { where: { id: app.userId } });
 
     // se a freguesia do fornecedor não existir na tabela das freguesias, criar nova freguesia
-    const parish = await parishService.getParishByName(app.freguesia)
-    if (!parish) {
-      await parishService.createParish({name :app.freguesia})
+    const parish = app.freguesia
+      ? await parishService.getParishByName(app.freguesia)
+      : null;
+    if (app.freguesia && !parish) {
+      await parishService.createParish({ name: app.freguesia });
     }
     // se a freguesia estiver na tabela, ver se "quarantined" está a true, se estiver, colocar user com status "quarantine"
     const user = await User.findByPk(app.userId);

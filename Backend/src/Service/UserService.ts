@@ -6,8 +6,6 @@ import { OrderService } from "./OrderService";
 import { NeededProduct } from "../Model/NeededProduct";
 import { generateOrdersFromNeededProducts } from "../utils/generateOrdersFromNeededProducts";
 
-const SECRET_KEY = process.env.SECRET_KEY || "minha_chave_secreta";
-
 export class UserService {
   // Criar novo utilizador
   static async createUser(name: string, email: string, password: string, role: "Supplier" | "NetworkManager" | "Nutritionist" | "Student" | "Visitor" | "NursingHome" | "RefectoryStaff"| "StockManager"| "CanteenManager" | "RefectoryManager", refeitorioId?: number, canteenId?: number) {

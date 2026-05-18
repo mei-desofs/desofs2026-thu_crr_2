@@ -1,6 +1,7 @@
 import {MenuService} from "../Service/MenuService";
 import {Request, Response} from "express";
 import {createMenuSchema} from "../Schemas/MenuValidation";
+import { logRequestIdentifiers } from "../utils/safeDebugLog";
 
 const service = new MenuService()
 
@@ -11,8 +12,7 @@ export class MenuController {
         if (error) return res.status(400).json({ error: error.message });
 
         try {
-
-            console.log("💥 MenuController.createMenu called with body:", req.body);
+            logRequestIdentifiers("MenuController.createMenu", req); // MT25
 
             const menuData = {
                 ...req.body,

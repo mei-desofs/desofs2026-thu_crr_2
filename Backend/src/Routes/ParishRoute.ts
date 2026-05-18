@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { ParishController } from "../Controller/ParishController";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(apiRateLimiter);
+router.use(authMiddleware);
 
 // CRUD Products
 router.post("/", ParishController.createParish);

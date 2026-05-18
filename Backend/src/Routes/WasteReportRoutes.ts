@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { WasteReportController } from "../Controller/WasteReportController";
+import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
+
+router.use(apiRateLimiter);
+router.use(authMiddleware);
 
 router.post("/", WasteReportController.createWasteReport);
 router.get("/meal/:mealId", WasteReportController.getWasteReportsByMeal);

@@ -17,14 +17,18 @@ export interface ApplicationAttributes {
   supplierComment?: string;
   name: string;
   location: string;
-  freguesia: string;
-  municipio: string;
+  freguesia?: string;
+  municipio?: string;
   businessEmail: string;
   businessPhone: string;
   evaluationComment?: string;
 }
 
-export type ApplicationCreationAttributes = Optional<ApplicationAttributes, "id" | "applicationDate">;
+/** Campos com default na BD ou opcionais ao criar. */
+export type ApplicationCreationAttributes = Optional<
+  ApplicationAttributes,
+  "id" | "applicationDate" | "status" | "documentsSubmitted" | "freguesia" | "municipio"
+>;
 
 export class Application
   extends Model<ApplicationAttributes, ApplicationCreationAttributes>
@@ -38,8 +42,8 @@ export class Application
   public supplierComment?: string;
   public name!: string;
   public location!: string;
-  public freguesia!: string;
-  public municipio!: string;
+  public freguesia?: string;
+  public municipio?: string;
   public businessEmail!: string;
   public businessPhone!: string;
   public evaluationComment?: string;
