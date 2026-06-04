@@ -11,6 +11,7 @@
 | D3 | Rever **rotas protegidas** - confirmar que nenhuma rota sensível está acessível sem autenticação/autorização | ? | Por começar |
 | D4 | Rever outros pontos de segurança no desenvolvimento **(ver slides das teóricas)** |  Pendente | Pendente |
 
+verificar se com o deploy do backend há alguma mitigation que precisa ser implementada
 ---
 
 ## 🏗️ Build and Test (35%)
