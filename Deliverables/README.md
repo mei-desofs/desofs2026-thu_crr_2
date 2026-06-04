@@ -80,3 +80,7 @@
 ### ASVS
 [Ver documento](Phase_2/ASVS.md)
 [Ver documento](Phase_1/ASVS_5.0_Tracker.xlsx)
+
+---
+
+## Artefactos da Fase 3
