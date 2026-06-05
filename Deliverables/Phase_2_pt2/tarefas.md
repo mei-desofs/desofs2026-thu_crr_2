@@ -16,9 +16,9 @@ verificar se com o deploy do backend há alguma mitigation que precisa ser imple
 
 ## 🏗️ Build and Test (35%)
 
-| # | Tarefa | Responsável | Status |
-|---|--------|--------|--------|
-| B1 | Aprimorar **pipeline** CI/CD - melhorar automatização de SAST, DAST, SCA e testes de segurança | ? | Por começar |
+| # | Tarefa                                                               | Responsável | Status |
+|---|----------------------------------------------------------------------|--------|--------|
+| B1 | Aprimorar **pipeline** CI/CD - melhorar automatização, caso possível | ? | Por começar |
 
 ---
 
