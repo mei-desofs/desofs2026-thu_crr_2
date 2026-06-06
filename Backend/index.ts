@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
-import { sequelize } from "./src/Config/db"; 
+import { sequelize } from "./src/Config/db";
 import userRoutes from "./src/Routes/UserRoutes";
 import auxiliarRoutes from "./src/Routes/AuxiliarRoutes";
 import productRoutes from "./src/Routes/ProductRoutes";
@@ -31,21 +31,36 @@ import ProducerStatisticsRoutes from "./src/Routes/ProducerStatisticsRoutes";
 import "./src/Model/associations";
 import { startMarkUnconsumedReservationsJob } from "./src/Jobs/markUnconsumedReservations";
 import { startWeeklyMenuPlanningJob } from "./src/Jobs/weeklyMenuPlanning";
-import path from "path";
+
+// ── Logging & segurança ──────────────────────────────────────────────────────
+import logger from "./src/utils/logger";
+import { httpLogger } from "./src/middlewares/httpLogger";
+import { securityLogger } from "./src/middlewares/securityLogger";
 import { errorHandler } from "./src/middlewares/errorHandler";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// --- CORS ---
+// ── CORS ─────────────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: process.env.CORS_ORIGIN ?? "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-  credentials: true
+  credentials: true,
 }));
 
+// ── Body parsing ──────────────────────────────────────────────────────────────
 // MT19-Solution: explicit JSON body size limit (R8 — DoS via huge payloads)
 app.use(express.json({ limit: "1mb" }));
+
+// ── Logging de pedidos HTTP ───────────────────────────────────────────────────
+// Deve vir antes das rotas para capturar todos os pedidos
+app.use(httpLogger);
+
+// ── Logging de segurança (XSS, SQLi, Path Traversal) ─────────────────────────
+// Vem depois do JSON parser para poder inspecionar o body
+app.use(securityLogger);
+
+// ── Rotas ─────────────────────────────────────────────────────────────────────
 app.use("/users", userRoutes);
 app.use("/auxiliar", auxiliarRoutes);
 app.use("/products", productRoutes);
@@ -70,35 +85,31 @@ app.use("/institutions", InstitutionRoutes);
 app.use("/refeitorios", RefeitorioRoutes);
 app.use("/canteens", CanteenRoutes);
 app.use("/producer-statistics", ProducerStatisticsRoutes);
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("Backend TypeScript + MySQL a funcionar!");
 });
 
-// ── MT22-Solution: central error handler
+// ── Error handler central (deve ser ÚLTIMO) ───────────────────────────────────
 app.use(errorHandler);
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const startServer = async () => {
   try {
     await sequelize.authenticate();
-    console.log("✅ Ligado ao MySQL com sucesso!");
-    
-    await sequelize.sync({alter:false});
-    console.log("✅ Tabelas sincronizadas!");
+    logger.info("DB:CONNECTED", { message: "Ligado ao MySQL com sucesso" });
 
-    // Executa o bootstrap antes de iniciar o servidor
-    //await bootstrap();
-    //console.log("✅ Bootstrap executado!");
+    await sequelize.sync({ alter: false });
+    logger.info("DB:SYNCED", { message: "Tabelas sincronizadas" });
 
-    // Inicia os jobs agendados
     startMarkUnconsumedReservationsJob();
-
     startWeeklyMenuPlanningJob();
-    
+
     app.listen(PORT, () => {
-      console.log(`🚀 Servidor a correr na porta ${PORT}`);
+      logger.info("SERVER:START", { port: PORT, env: process.env.NODE_ENV ?? "development" });
     });
   } catch (error) {
-    console.error("❌ Erro ao iniciar:", error);
+    logger.error("SERVER:BOOT_FAILED", { error });
     process.exit(1);
   }
 };
