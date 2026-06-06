@@ -5,6 +5,7 @@ import { rejectNonPdfFiles } from "../utils/validatePdfMagicBytes";
 import { sanitizeFilename } from "../utils/sanitizeFilename";
 import path from "path";
 import fs from "fs";
+import logger from "../utils/logger";
 
 const service = new ApplicationService();
 
@@ -47,13 +48,22 @@ function buildSafeFilePath(prefix: string, originalname: string): { newFilename:
   const newFilename = `${prefix}-${safeName}`;
   const newPath = path.join(UPLOADS_DIR, newFilename);
 
-  // Guard: ensure the resolved path stays strictly inside the uploads directory
   const resolvedPath = path.resolve(newPath);
   if (!resolvedPath.startsWith(UPLOADS_DIR + path.sep)) {
     throw new Error("INVALID_FILE_PATH");
   }
 
   return { newFilename, newPath };
+}
+
+function getClientIp(req: Request): string {
+  const forwarded = req.headers["x-forwarded-for"];
+  if (forwarded) {
+    return (Array.isArray(forwarded) ? forwarded[0] : forwarded)
+      .split(",")[0]
+      .trim();
+  }
+  return req.ip ?? "unknown";
 }
 
 export class ApplicationController {
@@ -64,10 +74,16 @@ export class ApplicationController {
 
     try {
       const app = await service.createApplication(req.body);
+      logger.info("APP:CREATED", {
+        applicationId: app?.id,
+        userId: req.body.userId,
+      });
       res.json(app);
     } catch (err: any) {
-      if (err.message === "APPLICATION_ALREADY_EXISTS")
+      if (err.message === "APPLICATION_ALREADY_EXISTS") {
+        logger.warn("APP:DUPLICATE", { userId: req.body.userId });
         return res.status(409).json({ error: "User already has an application" });
+      }
       return res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -100,32 +116,48 @@ export class ApplicationController {
     if (filename == null || filename.length == 0) {
       return res.status(400).json({ error: "Invalid filename" });
     }
- 
+
     try {
       // MT14-Solution: ownership check (R4)
-      // Only the Visitor who owns the application, or a NetworkManager, can access documents.
       const requestingUser = (req as any).user;
       const isNetworkManager = requestingUser.role === "NetworkManager";
- 
+
       if (!isNetworkManager) {
         const app = await service.getApplicationByUser(requestingUser.id);
         const isOwner = app && Number(app.id) === applicationId;
         if (!isOwner) {
+          logger.warn("SECURITY:UNAUTHORIZED_DOCUMENT_ACCESS", {
+            requestingUserId: requestingUser.id,
+            requestingRole: requestingUser.role,
+            targetApplicationId: applicationId,
+            filename,
+            ip: getClientIp(req),
+          });
           return res.status(403).json({ error: "Access denied" });
         }
       }
- 
+
       const filePath: string = await service
         .getFilePathByApplicationIdAndFileName(applicationId, filename);
+
+      logger.info("APP:DOCUMENT_ACCESSED", {
+        applicationId,
+        filename,
+        userId: requestingUser.id,
+      });
+
       return res.sendFile(filePath);
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
         return res.status(404).json({ error: "Application not found" });
-      console.error("Error fetching document:", err);
+      logger.error("APP:DOCUMENT_FETCH_ERROR", {
+        applicationId,
+        filename,
+        error: err.message,
+      });
       return res.status(500).json({ message: "Internal server error" });
     }
   }
-  
 
   static async updateApplication(req: Request, res: Response) {
     const applicationId = Number(req.params.applicationId);
@@ -135,6 +167,10 @@ export class ApplicationController {
 
     try {
       const updatedApp = await service.updateApplication(applicationId, req.body);
+      logger.info("APP:UPDATED", {
+        applicationId,
+        userId: req.body.userId,
+      });
       res.json(updatedApp);
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
@@ -148,6 +184,11 @@ export class ApplicationController {
     if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
     try {
       const updatedApp = await service.acceptApplication(applicationId, req.body.evaluationComment);
+      logger.info("APP:ACCEPTED", {
+        applicationId,
+        by: (req as any).user?.id,
+        evaluationComment: req.body.evaluationComment ?? null,
+      });
       res.json(updatedApp);
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
@@ -161,6 +202,11 @@ export class ApplicationController {
     if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
     try {
       const updatedApp = await service.rejectApplication(applicationId, req.body.evaluationComment);
+      logger.info("APP:REJECTED", {
+        applicationId,
+        by: (req as any).user?.id,
+        evaluationComment: req.body.evaluationComment ?? null,
+      });
       res.json(updatedApp);
     } catch (err: any) {
       if (err.message === "APPLICATION_NOT_FOUND")
@@ -170,95 +216,116 @@ export class ApplicationController {
   }
 
   static async createApplicationWithFiles(req: Request, res: Response) {
-  try {
-    const { userId, businessEmail, businessPhone, name, location, freguesia, municipio, supplierComment, farmerProducts } = req.body;
+    try {
+      const { userId, businessEmail, businessPhone, name, location, freguesia, municipio, supplierComment, farmerProducts } = req.body;
 
-    // Criar aplicação **primeiro** sem ficheiros
-    const app = await service.createApplication({
-      userId,
-      businessEmail,
-      businessPhone,
-      name,
-      location,
-      freguesia,
-      municipio,
-      supplierComment,
-      documentsSubmitted: [],  // 🔹 inicializar vazio
-      farmerProducts: JSON.parse(farmerProducts)
-    });
+      const app = await service.createApplication({
+        userId,
+        businessEmail,
+        businessPhone,
+        name,
+        location,
+        freguesia,
+        municipio,
+        supplierComment,
+        documentsSubmitted: [],
+        farmerProducts: JSON.parse(farmerProducts)
+      });
 
-    if (!app) return res.status(500).json({ error: "Failed to create application" });
-    const applicationId = app.id;
-    const files = req.files as Express.Multer.File[] || [];
+      if (!app) return res.status(500).json({ error: "Failed to create application" });
 
-    // Renomear ficheiros com userId-applicationId-nomeOriginal
-    const uploadsRoot = path.resolve("uploads");
-    const safeUserId = sanitizeFilename(String(userId));
-    const documents = files.map(f => {
-      const safeOriginalName = sanitizeFilename(f.originalname);
-      const newFilename = `${safeUserId}-${applicationId}-${safeOriginalName}`;
-      const newPath = path.resolve(uploadsRoot, newFilename);
+      const applicationId = app.id;
+      const files = req.files as Express.Multer.File[] || [];
 
-      if (!newPath.startsWith(uploadsRoot + path.sep)) {
-        throw new Error("INVALID_UPLOAD_PATH");
+      const uploadsRoot = path.resolve("uploads");
+      const safeUserId = sanitizeFilename(String(userId));
+
+      const documents = files.map(f => {
+        const safeOriginalName = sanitizeFilename(f.originalname);
+        const newFilename = `${safeUserId}-${applicationId}-${safeOriginalName}`;
+        const newPath = path.resolve(uploadsRoot, newFilename);
+
+        if (!newPath.startsWith(uploadsRoot + path.sep)) {
+          logger.error("SECURITY:PATH_TRAVERSAL_UPLOAD", {
+            userId,
+            applicationId,
+            filename: f.originalname,
+            resolvedPath: newPath,
+            ip: getClientIp(req),
+          });
+          throw new Error("INVALID_UPLOAD_PATH");
+        }
+
+        fs.renameSync(f.path, newPath);
+        return { filename: f.originalname, path: path.join("uploads", newFilename) };
+      });
+
+      const updatedApp = await service.updateApplication(applicationId, { documentsSubmitted: documents });
+
+      logger.info("APP:FILES_UPLOADED", {
+        applicationId,
+        userId,
+        fileCount: files.length,
+        filenames: files.map(f => f.originalname),
+      });
+
+      res.status(201).json(updatedApp);
+    } catch (err: any) {
+      if (err.message === "APPLICATION_ALREADY_EXISTS") {
+        logger.warn("APP:DUPLICATE", { userId: req.body.userId });
+        return res.status(409).json({ error: "User already has an application" });
+      }
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  static async updateApplicationWithFiles(req: Request, res: Response) {
+    try {
+      const applicationId = Number(req.params.applicationId);
+      if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
+
+      const existingApp = await service.getApplicationByUser(Number(req.body.userId));
+
+      const files = req.files as Express.Multer.File[] || [];
+      const fs = require("fs");
+      const path = require("path");
+
+      const newDocuments = files.map(f => {
+        const newFilename = `${existingApp.userId}-${applicationId}-${f.originalname}`;
+        const newPath = path.join("uploads", newFilename);
+        fs.renameSync(f.path, newPath);
+        return { filename: f.originalname, path: newPath };
+      });
+
+      const documentsSubmitted = existingApp.documentsSubmitted
+        ? [...existingApp.documentsSubmitted, ...newDocuments]
+        : newDocuments;
+
+      const bodyData = {
+        ...req.body,
+        farmerProducts: JSON.parse(req.body.farmerProducts),
+        documentsSubmitted
+      };
+
+      const { error } = applicationSchema.validate(bodyData);
+      if (error) return res.status(400).json({ error: error.message });
+
+      const updatedApp = await service.updateApplication(applicationId, bodyData);
+
+      if (files.length > 0) {
+        logger.info("APP:FILES_UPDATED", {
+          applicationId,
+          userId: req.body.userId,
+          newFileCount: files.length,
+          filenames: files.map((f: Express.Multer.File) => f.originalname),
+        });
       }
 
-      fs.renameSync(f.path, newPath); // mover/renomear ficheiro
-
-      return { filename: f.originalname, path: path.join("uploads", newFilename) };
-    });
-
-    // Atualizar aplicação com documentos
-    const updatedApp = await service.updateApplication(applicationId, { documentsSubmitted: documents });
-
-    res.status(201).json(updatedApp);
-  } catch (err: any) {
-    console.error(err);
-    if (err.message === "APPLICATION_ALREADY_EXISTS")
-      return res.status(409).json({ error: "User already has an application" });
-    return res.status(500).json({ message: "Internal server error" });
+      res.json(updatedApp);
+    } catch (err: any) {
+      if (err.message === "APPLICATION_NOT_FOUND")
+        return res.status(404).json({ error: "Application not found" });
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
-}
-
-static async updateApplicationWithFiles(req: Request, res: Response) {
-  try {
-    const applicationId = Number(req.params.applicationId);
-    if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
-
-    // Buscar aplicação existente
-    const existingApp = await service.getApplicationByUser(Number(req.body.userId));
-
-    const files = req.files as Express.Multer.File[] || [];
-    const fs = require("fs");
-    const path = require("path");
-
-    const newDocuments = files.map(f => {
-      const newFilename = `${existingApp.userId}-${applicationId}-${f.originalname}`;
-      const newPath = path.join("uploads", newFilename);
-      fs.renameSync(f.path, newPath);
-      return { filename: f.originalname, path: newPath };
-    });
-
-    const documentsSubmitted = existingApp.documentsSubmitted
-      ? [...existingApp.documentsSubmitted, ...newDocuments]
-      : newDocuments;
-
-    const bodyData = {
-      ...req.body,
-      farmerProducts: JSON.parse(req.body.farmerProducts),
-      documentsSubmitted
-    };
-
-    const { error } = applicationSchema.validate(bodyData);
-    if (error) return res.status(400).json({ error: error.message });
-
-    const updatedApp = await service.updateApplication(applicationId, bodyData);
-    res.json(updatedApp);
-  } catch (err: any) {
-    console.error(err);
-    if (err.message === "APPLICATION_NOT_FOUND")
-      return res.status(404).json({ error: "Application not found" });
-    return res.status(500).json({ message: "Internal server error" });
-  }
-}
 }
