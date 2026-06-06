@@ -2,6 +2,8 @@
 
 # Phase 2: Sprint 2 - Tarefas
 
+# *AVISO: NÃO ESQUECER DE CRIAR BRANCHS E PRS PARA CADA TASK!!*
+
 ## 🔧 Development (35%)
 
 | # | Tarefa | Responsável | Status |
