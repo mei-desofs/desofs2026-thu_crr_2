@@ -81,7 +81,8 @@ export function securityLogger(req: Request, _res: Response, next: NextFunction)
   const ip = getClientIp(req);
   const method = sanitize(req.method);
   const path = sanitize(req.path);
-  const ua = sanitize(req.headers["user-agent"] ?? "");
+  const uaHeader = req.headers["user-agent"];
+  const ua = sanitize(Array.isArray(uaHeader) ? uaHeader[0] : uaHeader ?? "");
 
   // Valores a analisar: query params + body
   const queryValues = flattenObject(req.query as Record<string, unknown>);
