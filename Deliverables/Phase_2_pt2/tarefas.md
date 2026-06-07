@@ -12,6 +12,8 @@
 | D2 | Rever **autorização** - garantir que roles e permissões estão corretamente aplicadas em todos os endpoints | ? | Por começar |
 | D3 | Rever **rotas protegidas** - confirmar que nenhuma rota sensível está acessível sem autenticação/autorização | ? | Por começar |
 | D4 | Rever outros pontos de segurança no desenvolvimento **(ver slides das teóricas)** |  Pendente | Pendente |
+| D5 | Schemas - validação de dados em endpoints e operações | ? | Por começar |
+
 
 verificar se com o deploy do backend há alguma mitigation que precisa ser implementada
 ---
