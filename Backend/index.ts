@@ -109,7 +109,10 @@ const startServer = async () => {
       logger.info("SERVER:START", { port: PORT, env: process.env.NODE_ENV ?? "development" });
     });
   } catch (error) {
-    logger.error("SERVER:BOOT_FAILED", { error });
+    logger.error("SERVER:BOOT_FAILED", {
+       error: error instanceof Error ? error.message : String(error),
+       stack: error instanceof Error ? error.stack : undefined,
+     });
     process.exit(1);
   }
 };

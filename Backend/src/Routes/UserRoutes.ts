@@ -5,7 +5,7 @@ import {
   authMiddleware,
   loginRateLimiter,
 } from "../middlewares/authMiddleware";
-import { loginLogger, onRateLimitHit } from "../middlewares/securityLogger";
+import { loginLogger } from "../middlewares/securityLogger";
 
 const router = Router();
 

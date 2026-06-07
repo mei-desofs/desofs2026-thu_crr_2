@@ -235,7 +235,29 @@ export class ApplicationController {
       if (!app) return res.status(500).json({ error: "Failed to create application" });
 
       const applicationId = app.id;
-      const files = req.files as Express.Multer.File[] || [];
+      const rawFiles = req.files;
+       const files: Express.Multer.File[] | null =
+         rawFiles === undefined
+           ? []
+           : Array.isArray(rawFiles) &&
+             rawFiles.every(
+               (f) =>
+                 f &&
+                 typeof f === "object" &&
+                 typeof (f as Express.Multer.File).originalname === "string" &&
+                 typeof (f as Express.Multer.File).path === "string"
+             )
+           ? (rawFiles as Express.Multer.File[])
+           : (() => {
+               logger.warn("APP:INVALID_FILES_PAYLOAD", {
+                 userId: req.body?.userId,
+                 ip: getClientIp(req),
+               });
+               return null;
+             })();
+       if (files === null) {
+         return res.status(400).json({ error: "Invalid files payload" });
+       }
 
       const uploadsRoot = path.resolve("uploads");
       const safeUserId = sanitizeFilename(String(userId));
@@ -286,15 +308,19 @@ export class ApplicationController {
 
       const existingApp = await service.getApplicationByUser(Number(req.body.userId));
 
-      const files = req.files as Express.Multer.File[] || [];
+      const rawFiles = req.files;
+       if (rawFiles != null && !Array.isArray(rawFiles)) {
+         return res.status(400).json({ error: "Invalid files payload" });
+       }
+       const files: Express.Multer.File[] = Array.isArray(rawFiles) ? rawFiles : [];
+       
       const fs = require("fs");
       const path = require("path");
 
-      const newDocuments = files.map(f => {
-        const newFilename = `${existingApp.userId}-${applicationId}-${f.originalname}`;
-        const newPath = path.join("uploads", newFilename);
+      const newDocuments = files.map((f: Express.Multer.File) => {
+        const { newFilename, newPath } = buildSafeFilePath(`${existingApp.userId}-${applicationId}`, f.originalname);
         fs.renameSync(f.path, newPath);
-        return { filename: f.originalname, path: newPath };
+        return { filename: f.originalname, path: path.join("uploads", newFilename) };
       });
 
       const documentsSubmitted = existingApp.documentsSubmitted

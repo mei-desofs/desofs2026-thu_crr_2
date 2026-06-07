@@ -9,7 +9,7 @@ const reservationService = new ReservationService();
 
 export function startMarkUnconsumedReservationsJob() {
   cron.schedule("42 3 * * *", async () => {
-    const testDate = new Date(2026, 0, 16);
+    const testDate = new Date();
  
     logger.info("JOB:UNCONSUMED_RESERVATIONS_START", {
       checkDate: testDate.toISOString().split("T")[0],

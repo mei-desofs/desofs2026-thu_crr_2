@@ -65,8 +65,8 @@ export class OrderController {
 
       const order = await OrderService.updateStatus(Number(id), status);
 
-      const level = status === "cancelled" || status === "rejected" ? "warn" : "info";
-      logger[level]("ORDER:STATUS_CHANGED", {
+      const logFn = status === "cancelled" || status === "rejected" ? logger.warn.bind(logger) : logger.info.bind(logger);
+        logFn("ORDER:STATUS_CHANGED", {
         orderId: Number(id),
         status,
         by: (req as any).user?.id,
