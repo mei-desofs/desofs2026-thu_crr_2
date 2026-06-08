@@ -7,12 +7,12 @@
 ## 🔧 Development (35%)
 
 | # | Tarefa | Responsável | Status |
-|---|--------|--------|--------|
-| D1 | Implementar/rever mecanismos de **logging** (requests, erros, eventos de segurança) | Diogo | Em processo |
-| D2 | Rever **autorização** - garantir que roles e permissões estão corretamente aplicadas em todos os endpoints | ? | Por começar |
-| D3 | Rever **rotas protegidas** - confirmar que nenhuma rota sensível está acessível sem autenticação/autorização | ? | Por começar |
-| D4 | Rever outros pontos de segurança no desenvolvimento **(ver slides das teóricas)** |  Pendente | Pendente |
-| D5 | Schemas - validação de dados em endpoints e operações | ? | Por começar |
+|---|--------|-----------|--------|
+| D1 | Implementar/rever mecanismos de **logging** (requests, erros, eventos de segurança) | Diogo     | Em processo |
+| D2 | Rever **autorização** - garantir que roles e permissões estão corretamente aplicadas em todos os endpoints | ?         | Por começar |
+| D3 | Rever **rotas protegidas** - confirmar que nenhuma rota sensível está acessível sem autenticação/autorização | Mateus    | Por começar |
+| D4 | Rever outros pontos de segurança no desenvolvimento **(ver slides das teóricas)** | Pendente  | Pendente |
+| D5 | Schemas - validação de dados em endpoints e operações | ?         | Por começar |
 
 
 verificar se com o deploy do backend há alguma mitigation que precisa ser implementada
@@ -20,9 +20,9 @@ verificar se com o deploy do backend há alguma mitigation que precisa ser imple
 
 ## 🏗️ Build and Test (35%)
 
-| # | Tarefa                                                               | Responsável | Status |
-|---|----------------------------------------------------------------------|--------|--------|
-| B1 | Aprimorar **pipeline** CI/CD - melhorar automatização, caso possível | ? | Por começar |
+| # | Tarefa                                                               | Responsável     | Status |
+|---|----------------------------------------------------------------------|-----------------|--------|
+| B1 | Aprimorar **pipeline** CI/CD - melhorar automatização, caso possível | Mateus | Por começar |
 
 ---
 
@@ -40,9 +40,9 @@ verificar se com o deploy do backend há alguma mitigation que precisa ser imple
 ## 🔍 Operate (5%)
 
 | # | Tarefa | Responsável | Status |
-|---|--------|--------|--------|
-| O1 | Implementar/documentar estratégia de **backups** | ? | Por começar |
-| O2 | **Vulnerability management** - rever componentes com vulnerabilidades conhecidas (SCA) | ? | Por começar |
+|---|--------|-------------|--------|
+| O1 | Implementar/documentar estratégia de **backups** | Mateus      | Por começar |
+| O2 | **Vulnerability management** - rever componentes com vulnerabilidades conhecidas (SCA) | ?           | Por começar |
 
 ---
 
