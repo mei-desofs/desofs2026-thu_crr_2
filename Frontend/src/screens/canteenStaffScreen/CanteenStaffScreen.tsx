@@ -1,3 +1,4 @@
+import { useLogout } from "../../util/useLogout";
 import { Bell, LogOut, ClipboardList, Info, Leaf, BookOpen } from 'lucide-react';
 import { canteenStaffStyles } from './CanteenStaffScreen.styles';
 import { useNavigate } from 'react-router-dom';
@@ -17,9 +18,7 @@ export default function RefectoryStaffDashboard() {
         navigate('/bioPercentage-screen');
     };
 
-    const handleLogout = () => {
-        navigate('/login');
-    };
+    const handleLogout = useLogout();
 
     return (
         <div style={canteenStaffStyles.pageContainer}>

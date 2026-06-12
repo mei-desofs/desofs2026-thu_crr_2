@@ -5,8 +5,13 @@ export function logRequestIdentifiers(
   tag: string,
   req: Pick<Request, "method" | "path" | "originalUrl" | "params" | "body">,
 ): void {
+  // Em produção não regista nada; em dev só identificadores do pedido (nunca valores do body).
   if (!isNonProduction()) return;
+
+  // Identificadores: método + URL
   const path = req.originalUrl || req.path || "";
+
+  // Nomes das chaves do body apenas - nunca passwords nem payload completo
   let bodyKeys: string;
   if (req.body === null || req.body === undefined) {
     bodyKeys = "-";
@@ -17,6 +22,7 @@ export function logRequestIdentifiers(
   } else {
     bodyKeys = typeof req.body;
   }
+
   const params =
     req.params && typeof req.params === "object" ? JSON.stringify(req.params) : "{}";
   console.log(`[M25][${tag}] ${req.method} ${path} params=${params} bodyKeys=${bodyKeys}`);

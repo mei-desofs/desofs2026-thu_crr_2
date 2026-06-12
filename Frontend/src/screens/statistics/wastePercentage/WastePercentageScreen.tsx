@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Bell, LogOut, ArrowLeft, Calendar, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
@@ -225,9 +226,7 @@ export default function WastePercentageScreen() {
     navigate("/statistics-dashboard");
   };
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   return (
     <div style={wastePercentageStyles.pageContainer}>

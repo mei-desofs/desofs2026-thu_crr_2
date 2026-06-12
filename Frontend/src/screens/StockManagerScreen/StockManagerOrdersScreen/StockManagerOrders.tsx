@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LogOut, ChevronDown, Calendar, Package, X, Leaf } from 'lucide-react';
 import { supplierOrdersStyles } from './StockManagerOrders.styles'; // podemos criar um styles próprio depois
@@ -104,9 +105,7 @@ export default function StockManagerOrders() {
     return grouped;
   };
 
-  const handleLogout = () => {
-    navigate('/login');
-  };
+  const handleLogout = useLogout();
 
   return (
     <div style={supplierOrdersStyles.pageContainer}>

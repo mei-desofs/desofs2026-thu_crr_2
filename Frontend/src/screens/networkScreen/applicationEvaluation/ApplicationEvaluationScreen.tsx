@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import {
@@ -77,9 +78,7 @@ export default function ApplicationEvaluationScreen() {
     Application[]
   >([]);
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   const handleOpenModal = (
     application: Application,

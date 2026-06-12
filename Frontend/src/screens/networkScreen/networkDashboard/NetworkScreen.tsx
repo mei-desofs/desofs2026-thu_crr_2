@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Bell, LogOut, FileText, Users, BarChart3, TrendingUp, Package } from 'lucide-react';
 import { useState } from 'react';
@@ -35,10 +36,7 @@ export default function NetworkManagerDashboard() {
     navigate("/network-producer-statistics");
   };
 
-  const handleLogout = () => {
-    // Logout logic
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   const getCardStyle = (cardName: string) => ({
     ...networkManagerStyles.card,

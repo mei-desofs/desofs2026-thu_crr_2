@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Bell, LogOut, ArrowLeft, Calendar, ChevronLeft, ChevronRight, TrendingUp, BarChart3, PieChart, LineChart } from 'lucide-react';
@@ -547,9 +548,7 @@ export default function PerformanceScreen() {
     navigate("/network-dashboard");
   };
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   // Calcular totais filtrados por tipo de refeição e tipo de prato
   // Nota: Se dishTypeFilter estiver ativo, o backend já filtra os dados, mas ainda precisamos filtrar por mealTypeFilter no frontend

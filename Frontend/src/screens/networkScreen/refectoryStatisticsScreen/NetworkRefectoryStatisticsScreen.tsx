@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Bell, LogOut, ArrowLeft, Calendar, ChevronLeft, ChevronRight, TrendingUp, BarChart3, PieChart, LineChart } from 'lucide-react';
@@ -519,9 +520,7 @@ export default function NetworkRefectoryStatisticsScreen() {
     navigate("/network-dashboard");
   };
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   // Calcular totais filtrados
   const filteredReservationTotals = (() => {

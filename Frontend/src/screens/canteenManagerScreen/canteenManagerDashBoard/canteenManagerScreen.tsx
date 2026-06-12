@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Bell, LogOut, Users, BarChart3 } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -53,10 +54,7 @@ export default function CanteenManagerDashboard() {
     navigate("/canteen-statistics");
   };
 
-  const handleLogout = () => {
-    // Logout logic
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   const getCardStyle = (cardName: string) => ({
     ...canteenManagerStyles.card,

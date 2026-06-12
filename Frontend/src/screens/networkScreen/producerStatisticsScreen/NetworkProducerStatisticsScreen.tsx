@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Bell, LogOut, ArrowLeft, Package } from 'lucide-react';
@@ -215,9 +216,7 @@ export default function NetworkProducerStatisticsScreen() {
     navigate("/network-dashboard");
   };
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
 
   return (

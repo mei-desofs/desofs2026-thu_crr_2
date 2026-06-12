@@ -1,3 +1,4 @@
+import { useLogout } from "../../util/useLogout";
 import { ArrowLeft, Bell, Calendar, Filter, LogOut, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { weekMenuStyles } from "./WeekMenuScreen.styles";
@@ -115,9 +116,7 @@ export default function WeekMenuScreen() {
     }
   };
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   const loadMenu = useCallback(async () => {
     setLoading(true);

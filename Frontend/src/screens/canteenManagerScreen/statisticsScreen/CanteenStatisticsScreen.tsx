@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Bell, LogOut, ArrowLeft, Package, Calendar, ChevronLeft, ChevronRight, Table, PieChart, BarChart3 } from 'lucide-react';
@@ -608,9 +609,7 @@ export default function CanteenStatisticsScreen() {
     navigate("/canteenmanager-dashboard");
   };
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   return (
     <div style={canteenStatisticsStyles.pageContainer}>

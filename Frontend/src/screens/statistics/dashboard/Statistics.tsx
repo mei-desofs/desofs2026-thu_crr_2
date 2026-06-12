@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { statisticsStyles } from './StatisticsScreen.styles';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useLogout } from "../../../util/useLogout";
 
 export default function StatisticsDashboard() {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
@@ -23,10 +24,7 @@ export default function StatisticsDashboard() {
     navigate("/performance");
   };
 
-  const handleLogout = () => {
-    // Logout logic
-    console.log('Logout');
-  };
+  const handleLogout = useLogout();
 
   const getCardStyle = (cardName: string) => ({
     ...statisticsStyles.card,

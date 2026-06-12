@@ -1,3 +1,4 @@
+import { useLogout } from "../../util/useLogout";
 import { Bell, LogOut, Calendar, Info, Leaf } from 'lucide-react';
 import { studentStyles } from './StudentScreen.styles';
 import { useNavigate } from 'react-router-dom';
@@ -12,10 +13,7 @@ export default function StudentDashboard() {
         navigate('/weekmenu');
     };
 
-    const handleLogout = () => {
-
-        navigate('/login');
-    };
+    const handleLogout = useLogout();
 
     return (
         <div style={studentStyles.pageContainer}>

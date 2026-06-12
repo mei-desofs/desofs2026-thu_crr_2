@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Bell, LogOut, ChevronDown, Calendar, Package, X, Check } from 'lucide-react';
 import { supplierOrdersStyles } from './SupplierOrders.styles';
@@ -73,9 +74,7 @@ export default function SupplierOrders() {
     }
   };
 
-  const handleLogout = () => {
-    navigate('/login');
-  };
+  const handleLogout = useLogout();
 
   const groupedOrders = () => {
     const grouped: Record<string, Order[]> = {};

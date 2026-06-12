@@ -121,8 +121,9 @@ export class ApplicationController {
       // MT14-Solution: ownership check (R4)
       const requestingUser = (req as any).user;
       const isNetworkManager = requestingUser.role === "NetworkManager";
+      const isCanteenManager = requestingUser.role === "CanteenManager";
 
-      if (!isNetworkManager) {
+      if (!isNetworkManager && !isCanteenManager) {
         const app = await service.getApplicationByUser(requestingUser.id);
         const isOwner = app && Number(app.id) === applicationId;
         if (!isOwner) {

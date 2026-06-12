@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import {
@@ -121,9 +122,7 @@ export default function SuppliersList() {
         sortDescending ? b.position - a.position : a.position - b.position
       );
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   const toggleQuarantine = async (supplierId: number, currentStatus: string) => {
     const isQuarantined = currentStatus === "quarantine";
