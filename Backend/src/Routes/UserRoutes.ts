@@ -5,31 +5,27 @@ import {
   authMiddleware,
   loginRateLimiter,
 } from "../middlewares/authMiddleware";
+import { loginLogger } from "../middlewares/securityLogger";
 
 const router = Router();
 
 router.use(apiRateLimiter);
 
 router.post("/register", UserController.register);
-router.post("/login", loginRateLimiter, UserController.login);
+
+// loginLogger interceta a resposta para registar sucesso/falha
+// onRateLimitHit é chamado pelo rate limiter quando o limite é atingido
+router.post(
+  "/login",
+  loginRateLimiter,
+  loginLogger,
+  UserController.login
+);
 
 router.use(authMiddleware);
 
 router.get("/:id", UserController.getById);
-
 router.patch("/startQuarantine/:id", UserController.startQuarantine);
 router.patch("/endQuarantine/:id", UserController.endQuarantine);
 
 export default router;
-
-
-/* ex
-
-
-router.get(
-  "/all",
-  authMiddleware,
-  authorizeRoles("Admin", "PT"),
-  userController.getAllIncludingInactive,
-);
-*/

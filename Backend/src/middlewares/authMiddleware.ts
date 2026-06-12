@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import rateLimit from "express-rate-limit";
+import { onRateLimitHit } from "./securityLogger";
 
-/** Limite global por IP nas rotas API (CodeQL js/missing-rate-limiting). */
+/** Limite global por IP nas rotas API */
 export const apiRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
@@ -10,14 +11,14 @@ export const apiRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+/** Limite específico para login — quando excedido regista como brute-force */
 export const loginRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
-  message: {
-    message: "Demasiadas tentativas de login. Tente novamente mais tarde.",
-  },
+  // onRateLimitHit loga o evento E responde com 429
+  handler: onRateLimitHit,
 });
 
 const secret = process.env.JWT_SECRET;
@@ -29,26 +30,23 @@ export const jwtSecret = secret;
 export const authMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader?.split(" ")[1]; // "Bearer <token>"
+  const token = authHeader?.split(" ")[1];
 
   if (!token) {
     return res.status(401).json({ message: "Token não fornecido" });
   }
 
   try {
-    const decoded = jwt.verify(token, jwtSecret) as JwtPayload; //mt7
+    const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
 
-    // Garantir que id e role existem
     if (!decoded.id || !decoded.role) {
       return res.status(403).json({ message: "Token inválido" });
     }
 
-    // anexamos o user ao request
     (req as any).user = { id: decoded.id, role: decoded.role };
-
     next();
   } catch (err) {
     return res.status(403).json({ message: "Token inválido ou expirado" });

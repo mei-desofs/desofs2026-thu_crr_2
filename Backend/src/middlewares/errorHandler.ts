@@ -1,17 +1,17 @@
 import { Request, Response, NextFunction } from "express";
+import logger from "../utils/logger";
 
 function sanitizeForLog(value: string): string {
-  // Strip CR/LF to prevent log injection (newline injection attacks)
   return value.replace(/[\r\n]/g, "");
 }
 
 /**
- * MT22-Solution — Central error handler (R3 mitigation)
+ * errorHandler (atualizado com winston)
  *
- * Sends a generic message to the client in production and logs
- * the full error detail (stack + message) only to the server console.
+ * Regista o erro completo (com stack) no logger e devolve
+ * uma mensagem genérica ao cliente em produção.
  *
- * Usage: register AFTER all routes in index.ts
+ * Manter como ÚLTIMO middleware em index.ts:
  *   app.use(errorHandler);
  */
 export function errorHandler(
@@ -21,17 +21,20 @@ export function errorHandler(
   _next: NextFunction
 ): void {
   const isDev = process.env.NODE_ENV !== "production";
-
   const method = sanitizeForLog(req.method);
   const path = sanitizeForLog(req.path);
 
-  // Always log the full detail server-side
-  // Uses %s format specifiers instead of template literals to avoid format string injection
-  console.error("[%s] Unhandled error on %s %s:", new Date().toISOString(), method, path, err);
+  logger.error("UNHANDLED_ERROR", {
+    method,
+    path,
+    error: err instanceof Error ? err.message : String(err),
+    stack: err instanceof Error ? err.stack : undefined,
+  });
 
   if (res.headersSent) return;
 
   res.status(500).json({
-    message: isDev && err instanceof Error ? err.message : "Internal server error",
+    message:
+      isDev && err instanceof Error ? err.message : "Internal server error",
   });
 }
