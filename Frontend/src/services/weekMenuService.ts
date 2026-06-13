@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import { API_BASE_URL } from "../../config";
 
 export interface WeekMenuMeal {
@@ -26,7 +26,7 @@ const API_URL = `${API_BASE_URL}/menus/week/current`;
 
 export const weekMenuService = {
   async getCurrentWeekMenu(): Promise<WeekMenuResponse> {
-    const response = await axios.get<WeekMenuResponse>(API_URL);
+    const response = await apiClient.get<WeekMenuResponse>(API_URL);
     return response.data;
   },
 };

@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import type { Menu } from "../models/Menu";
 import type { Meal } from "../models/Meal";
 import { API_BASE_URL } from "../../config";
@@ -53,7 +53,7 @@ export const menuService = {
   // Criar um novo menu
   // -------------------------
   async createMenu(data: Partial<Menu>): Promise<Menu> {
-    const response = await axios.post<Menu>(`${API_URL}`, data);
+    const response = await apiClient.post<Menu>(`${API_URL}`, data);
     return response.data;
   },
 
@@ -61,7 +61,7 @@ export const menuService = {
   // Listar todos os menus
   // -------------------------
   async listMenus(): Promise<Menu[]> {
-    const response = await axios.get<Menu[]>(`${API_URL}`);
+    const response = await apiClient.get<Menu[]>(`${API_URL}`);
     return response.data;
   },
 
@@ -80,22 +80,22 @@ export const menuService = {
     }
     const queryString = params.toString();
     const url = queryString ? `${API_URL}/week/current?${queryString}` : `${API_URL}/week/current`;
-    const response = await axios.get<WeekMenu>(url);
+    const response = await apiClient.get<WeekMenu>(url);
     return response.data;
   },
 
   async updateMenuStatus(id: number, status: "published" | "pending" | "aproved"): Promise<Menu> {
-    const response = await axios.put<Menu>(`${API_URL}/${id}`, { status });
+    const response = await apiClient.put<Menu>(`${API_URL}/${id}`, { status });
     return response.data;
   },
 
   async getMenuById(id: number): Promise<Menu> {
-    const response = await axios.get<Menu>(`${API_URL}/${id}`);
+    const response = await apiClient.get<Menu>(`${API_URL}/${id}`);
     return response.data;
   },
   
   async getMenusByCanteen(canteenId: number): Promise<Menu[]> {
-    const response = await axios.get<Menu[]>(`${API_URL}/canteen/${canteenId}`);
+    const response = await apiClient.get<Menu[]>(`${API_URL}/canteen/${canteenId}`);
     return response.data;
   }
 };

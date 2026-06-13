@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import type {Recipe} from "../models/Recipe"
 import { API_BASE_URL } from "../../config";
 
@@ -14,7 +14,7 @@ export const statisticsService = {
     // Listar todos as receitas e as suas respetivas percentagens de produtos bio
     // --------------------------------------------------------------------------
     async getBioProductsPercentageForRecipe(): Promise<BioPercentage[]> {
-        const response = await axios.get<BioPercentage[]>(API_URL);
+        const response = await apiClient.get<BioPercentage[]>(API_URL);
         return response.data;
     }
 };

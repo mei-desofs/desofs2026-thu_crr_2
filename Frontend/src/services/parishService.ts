@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import type { Parish } from "../models/Parish";
 import { API_BASE_URL } from "../../config";
 
@@ -13,27 +13,27 @@ export interface ParishView {
 
 export const parishService = {
   async createParish(data: Partial<Parish>): Promise<Parish> {
-    const response = await axios.post<Parish>(`${API_URL}`, data);
+    const response = await apiClient.post<Parish>(`${API_URL}`, data);
     return response.data;
   },
 
   async getParishById(id: number): Promise<Parish> {
-    const response = await axios.get<Parish>(`${API_URL}/${id}`);
+    const response = await apiClient.get<Parish>(`${API_URL}/${id}`);
     return response.data;
   },
 
   async listParishes(): Promise<ParishView[]> {
-    const response = await axios.get<ParishView[]>(`${API_URL}`);
+    const response = await apiClient.get<ParishView[]>(`${API_URL}`);
     return response.data;
   },
 
   async quarantineParish(id: number): Promise<ParishView> {
-    const response = await axios.patch<ParishView>(`${API_URL}/quarantineParish/${id}`);
+    const response = await apiClient.patch<ParishView>(`${API_URL}/quarantineParish/${id}`);
     return response.data;
   },
 
   async takeParishOfQuarantine(id: number): Promise<ParishView> {
-    const response = await axios.patch<ParishView>(`${API_URL}/takeParishOfQuarantine/${id}`);
+    const response = await apiClient.patch<ParishView>(`${API_URL}/takeParishOfQuarantine/${id}`);
     return response.data;
   }
 };

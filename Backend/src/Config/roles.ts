@@ -19,7 +19,7 @@ export const RoleGroups = {
   /** Farmer/producer applicant (before approval). */
   APPLICANT: [Role.Visitor],
   NETWORK: [Role.NetworkManager],
-  CANTEEN_MGMT: [Role.CanteenManager, Role.NetworkManager],
+  CANTEEN_MGMT: [Role.CanteenManager, Role.NetworkManager, ],
   NUTRITION: [Role.Nutritionist],
   MENU_READ: [Role.Student, Role.NursingHome, Role.Nutritionist, Role.RefectoryStaff],
   REFECTORY: [Role.RefectoryStaff, Role.RefectoryManager],

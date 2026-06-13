@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import type { User } from "../models/User";
 import { API_BASE_URL } from "../../config";
 import { setStoredToken } from "./setupAxiosAuth";
@@ -13,7 +13,7 @@ interface LoginResponse {
 
 export const authService = {
   async login(email: string, password: string): Promise<User> {
-    const response = await axios.post<LoginResponse>(`${API_URL}/login`, {
+    const response = await apiClient.post<LoginResponse>(`${API_URL}/login`, {
       email,
       password,
     });
