@@ -1,1 +1,1 @@
-export const API_BASE_URL = "https://desofs2026-thu-crr-2.onrender.com";
+export const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
