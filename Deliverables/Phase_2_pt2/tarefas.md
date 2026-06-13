@@ -32,8 +32,8 @@ verificar se com o deploy do backend há alguma mitigation que precisa ser imple
 |---|--------|--------|--------|
 | P1 | Garantir **logging em produção** (ex: integração com Render ou outro serviço) | Diogo | Em processo |
 | P2 | Configurar **auto deploy** (ex: deploy automático via pipeline no Render) | Diogo | Feito |
-| P3 | Documentar **configuration management** (variáveis de ambiente, secrets, etc.) | ? | Por começar |
-| P4 | Avaliar **patch management** - atualização de dependências/componentes vulneráveis | ? | Por começar |
+| P3 | Documentar **configuration management** (variáveis de ambiente, secrets, etc.) | João T | Por começar |
+| P4 | Avaliar **patch management** - atualização de dependências/componentes vulneráveis | João T | Por começar |
 
 ---
 
