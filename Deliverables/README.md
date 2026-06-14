@@ -84,3 +84,6 @@
 ---
 
 ## Artefactos da Fase 3
+
+## Deploy and Logging
+[Ver documento](Phase_2_pt2/Deploy_and_logging.md) 
