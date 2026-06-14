@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Bell, LogOut, Search, FileText, Leaf, AlertCircle } from "lucide-react";
@@ -49,7 +50,7 @@ export default function SuppliersList() {
     return true;
   });
 
-  const handleLogout = () => navigate("/login");
+  const handleLogout = useLogout();
 
   const toggleQuarantine = async (parish: ParishView) => {
     const action = parish.quarantined ? "retirar de quarentena" : "colocar em quarentena";

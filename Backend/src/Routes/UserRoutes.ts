@@ -6,6 +6,9 @@ import {
   loginRateLimiter,
 } from "../middlewares/authMiddleware";
 import { loginLogger } from "../middlewares/securityLogger";
+import { authorizeRoles } from "../middlewares/authorizeRoles";
+import { requireSelfOrRoles } from "../middlewares/requireSelfOrRoles";
+import { RoleGroups } from "../Config/roles";
 
 const router = Router();
 
@@ -24,8 +27,20 @@ router.post(
 
 router.use(authMiddleware);
 
-router.get("/:id", UserController.getById);
-router.patch("/startQuarantine/:id", UserController.startQuarantine);
-router.patch("/endQuarantine/:id", UserController.endQuarantine);
+router.get(
+  "/:id",
+  requireSelfOrRoles("id", ...RoleGroups.CANTEEN_MGMT, ...RoleGroups.STOCK),
+  UserController.getById,
+);
+router.patch(
+  "/startQuarantine/:id",
+  authorizeRoles(...RoleGroups.CANTEEN_MGMT),
+  UserController.startQuarantine,
+);
+router.patch(
+  "/endQuarantine/:id",
+  authorizeRoles(...RoleGroups.CANTEEN_MGMT),
+  UserController.endQuarantine,
+);
 
 export default router;

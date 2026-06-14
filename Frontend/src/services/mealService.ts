@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import type { Meal } from "../models/Meal";
 import { API_BASE_URL } from "../../config";
 
@@ -8,17 +8,17 @@ export const mealService = {
   // Criar um novo menu
   // -------------------------
   async createMeal(data: Partial<Meal>): Promise<Meal> {
-    const response = await axios.post<Meal>(`${API_URL}`, data);
+    const response = await apiClient.post<Meal>(`${API_URL}`, data);
     return response.data;
   },
 
   async getMealById(id: number): Promise<Meal> {
-    const response = await axios.get<Meal>(`${API_URL}/${id}`);
+    const response = await apiClient.get<Meal>(`${API_URL}/${id}`);
     return response.data;
   },
 
   async listMeals(): Promise<Meal[]> {
-    const response = await axios.get<Meal[]>(`${API_URL}`);
+    const response = await apiClient.get<Meal[]>(`${API_URL}`);
     return response.data;
   }
 };

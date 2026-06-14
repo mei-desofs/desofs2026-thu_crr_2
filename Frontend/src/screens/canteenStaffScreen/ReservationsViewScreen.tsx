@@ -1,3 +1,4 @@
+import { useLogout } from "../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArrowLeft, Bell, LogOut, Filter, Search, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -68,9 +69,7 @@ export default function ReservationsViewScreen() {
   const [reportedMealIds, setReportedMealIds] = useState<Set<string>>(new Set());
   const [refeitorioName, setRefeitorioName] = useState<string | null>(null);
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   const loadReservations = useCallback(async () => {
     setLoading(true);

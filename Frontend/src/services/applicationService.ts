@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import type { Application } from "../models/Application";
 import { API_BASE_URL } from "../../config";
 
@@ -9,7 +9,7 @@ export const applicationService = {
   // Criar uma nova aplicação
   // -------------------------
   async createApplication(data: Partial<Application>): Promise<Application> {
-    const response = await axios.post<Application>(`${API_URL}`, data);
+    const response = await apiClient.post<Application>(`${API_URL}`, data);
     return response.data;
   },
 
@@ -17,7 +17,7 @@ export const applicationService = {
   // Listar todas as aplicações
   // -------------------------
   async listApplications(): Promise<Application[]> {
-    const response = await axios.get<Application[]>(`${API_URL}`);
+    const response = await apiClient.get<Application[]>(`${API_URL}`);
     return response.data;
   },
 
@@ -25,29 +25,29 @@ export const applicationService = {
   // Obter aplicação por ID
   // -------------------------
   async getApplicationById(applicationId: number): Promise<Application> {
-    const response = await axios.get<Application>(`${API_URL}/${applicationId}`);
+    const response = await apiClient.get<Application>(`${API_URL}/${applicationId}`);
     return response.data;
   },
   // -------------------------
   // Atualizar uma aplicação
   // -------------------------
   async updateApplication(applicationId: number, data: Partial<Application>): Promise<Application> {
-    const response = await axios.put<Application>(`${API_URL}/${applicationId}`, data);
+    const response = await apiClient.put<Application>(`${API_URL}/${applicationId}`, data);
     return response.data;
   },
 
   async acceptApplication(applicationId: number, evaluationComment: string): Promise<Application> {
-    const response = await axios.post<Application>(`${API_URL}/${applicationId}/accept`, { evaluationComment });
+    const response = await apiClient.post<Application>(`${API_URL}/${applicationId}/accept`, { evaluationComment });
     return response.data;
   },
 
   async rejectApplication(applicationId: number, evaluationComment: string): Promise<Application> {
-    const response = await axios.post<Application>(`${API_URL}/${applicationId}/reject`, { evaluationComment });
+    const response = await apiClient.post<Application>(`${API_URL}/${applicationId}/reject`, { evaluationComment });
     return response.data;
   },
 
   async getApplicationByUser(userId: number): Promise<Application> {
-    const response = await axios.get<Application>(`${API_URL}/user/${userId}`);
+    const response = await apiClient.get<Application>(`${API_URL}/user/${userId}`);
     return response.data;
   },
 

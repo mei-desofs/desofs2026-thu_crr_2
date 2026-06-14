@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import { API_BASE_URL } from "../../config";
 
 const API_URL = `${API_BASE_URL}/performance`;
@@ -55,7 +55,7 @@ export const performanceService = {
     if (filters?.mealName) params.mealName = filters.mealName;
     if (filters?.refeitorioId !== undefined) params.refeitorioId = String(filters.refeitorioId);
 
-    const response = await axios.get<WastePercentageResponse>(`${API_URL}/waste`, { params });
+    const response = await apiClient.get<WastePercentageResponse>(`${API_URL}/waste`, { params });
     return response.data;
   },
 };

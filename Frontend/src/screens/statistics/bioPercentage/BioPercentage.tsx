@@ -2,6 +2,7 @@ import { Bell, LogOut, ArrowLeft, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { bioPercentageStyles } from './BioPercentage.styles';
 import { useNavigate } from "react-router-dom";
+import { useLogout } from "../../../util/useLogout";
 import { statisticsService } from "../../../services/statisticsService"
 import { dishService } from "../../../services/dishService"
 import { ingredientService } from "../../../services/ingredientService"
@@ -81,9 +82,7 @@ export default function BioPercentageScreen() {
     }
   };
 
-  const handleLogout = () => {
-    console.log("Logout triggered");
-  };
+  const handleLogout = useLogout();
 
   const formatPercent = (value: number) => {
     return Number.isInteger(value) ? value : Number(value.toFixed(2));

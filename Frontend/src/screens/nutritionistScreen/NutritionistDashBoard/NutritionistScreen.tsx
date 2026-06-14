@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Bell, LogOut, Calendar, Info, Leaf } from 'lucide-react';
 import { nutritionistStyles } from './NutritionistScreen.styles';
@@ -16,10 +17,7 @@ export default function NutritionistDashboard() {
     navigate('/create-menu');
   };
 
-  const handleLogout = () => {
-    // Lógica de logout
-    navigate('/login');
-  };
+  const handleLogout = useLogout();
 
   return (
     <div style={nutritionistStyles.pageContainer}>

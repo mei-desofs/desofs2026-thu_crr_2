@@ -1,3 +1,4 @@
+import { useLogout } from "../../util/useLogout";
 import { Bell, LogOut, Calendar, Info, Leaf } from "lucide-react";
 import { nursingHomeStyles } from "./NursingHomeScreen.styles";
 import { useNavigate } from "react-router-dom";
@@ -33,9 +34,7 @@ export default function NursingHomeDashboard() {
     return () => { mounted = false; };
   }, []);
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   return (
     <div style={nursingHomeStyles.pageContainer}>

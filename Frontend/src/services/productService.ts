@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import type { Product } from "../models/Product";
 import { API_BASE_URL } from "../../config";
 
@@ -9,7 +9,7 @@ export const productService = {
   // Criar um novo produto
   // -------------------------
   async createProduct(data: Partial<Product>): Promise<Product> {
-    const response = await axios.post<Product>(`${API_URL}`, data);
+    const response = await apiClient.post<Product>(`${API_URL}`, data);
     return response.data;
   },
 
@@ -17,7 +17,7 @@ export const productService = {
   // Listar todos os produtos
   // -------------------------
   async listProducts(): Promise<Product[]> {
-    const response = await axios.get<Product[]>(`${API_URL}`);
+    const response = await apiClient.get<Product[]>(`${API_URL}`);
     return response.data;
   },
 
@@ -25,7 +25,7 @@ export const productService = {
   // Obter produto por ID
   // -------------------------
   async getProductById(productId: number): Promise<Product> {
-    const response = await axios.get<Product>(`${API_URL}/${productId}`);
+    const response = await apiClient.get<Product>(`${API_URL}/${productId}`);
     return response.data;
   },
 };

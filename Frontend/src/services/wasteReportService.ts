@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import { API_BASE_URL } from "../../config";
 
 const API_URL = `${API_BASE_URL}/waste-reports`;
@@ -61,7 +61,7 @@ export const wasteReportService = {
   // Criar um novo report de desperdício
   // -------------------------
   async createWasteReport(data: CreateWasteReportPayload): Promise<WasteReport> {
-    const response = await axios.post<WasteReport>(API_URL, data);
+    const response = await apiClient.post<WasteReport>(API_URL, data);
     return response.data;
   },
 
@@ -69,7 +69,7 @@ export const wasteReportService = {
   // Obter reports por meal
   // -------------------------
   async getWasteReportsByMeal(mealId: number): Promise<WasteReport[]> {
-    const response = await axios.get<WasteReport[]>(`${API_URL}/meal/${mealId}`);
+    const response = await apiClient.get<WasteReport[]>(`${API_URL}/meal/${mealId}`);
     return response.data;
   },
 
@@ -77,7 +77,7 @@ export const wasteReportService = {
   // Obter reports por data
   // -------------------------
   async getWasteReportsByDate(date: string): Promise<WasteReport[]> {
-    const response = await axios.get<WasteReport[]>(`${API_URL}/date`, {
+    const response = await apiClient.get<WasteReport[]>(`${API_URL}/date`, {
       params: { date },
     });
     return response.data;
@@ -87,7 +87,7 @@ export const wasteReportService = {
   // Obter meals consumidas que precisam de report
   // -------------------------
   async getWasteReportsForConsumedMeals(date: string): Promise<WasteReportsForConsumedMeals> {
-    const response = await axios.get<WasteReportsForConsumedMeals>(`${API_URL}/consumed-meals`, {
+    const response = await apiClient.get<WasteReportsForConsumedMeals>(`${API_URL}/consumed-meals`, {
       params: { date },
     });
     return response.data;
@@ -109,7 +109,7 @@ export const wasteReportService = {
     if (filters?.mealName) params.mealName = filters.mealName;
     if (filters?.refeitorioId !== undefined) params.refeitorioId = String(filters.refeitorioId);
 
-    const response = await axios.get<WasteReportStatistics>(`${API_URL}/statistics`, { params });
+    const response = await apiClient.get<WasteReportStatistics>(`${API_URL}/statistics`, { params });
     return response.data;
   },
 };
