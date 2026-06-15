@@ -86,8 +86,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate code style and configurations
+        run: npm run lint
+
+      - name: Validate TypeScript Configuration
+        run: npx tsc --noEmit
+
       - name: Build TypeScript
         run: npm run build
+
+      - name: Generate SBOM (Component Inventory)
+        uses: anchore/sbom-action@v0
+        with:
+          path: Backend/
+          format: spdx-json
+          output-file: Backend/sbom.spdx.json
 
       - name: Run unit tests with coverage
         run: npm run test:unit -- --coverage
@@ -96,12 +109,14 @@ jobs:
           JWT_SECRET: test_secret
           SECRET_KEY: test_secret
 
-      - name: Upload coverage report
+      - name: Upload coverage report and SBOM
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
-          path: Backend/coverage/
+          name: coverage-and-inventory
+          path: |
+            Backend/coverage/
+            Backend/sbom.spdx.json
 
   codeql:
     name: CodeQL analysis
