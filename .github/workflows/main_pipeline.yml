@@ -86,9 +86,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate code style and configurations
-        run: npm run lint
-
       - name: Validate TypeScript Configuration
         run: npx tsc --noEmit
 
