@@ -39,6 +39,12 @@
     "uuid": "^13.0.0",
     "winston": "^3.19.0"
   },
+  "overrides": {
+    "sequelize": {
+      "uuid": "$uuid"
+    },
+    "ws": "^8.21.0"
+  },
   "devDependencies": {
     "@types/axios": "^0.9.36",
     "@types/bcrypt": "^6.0.0",
