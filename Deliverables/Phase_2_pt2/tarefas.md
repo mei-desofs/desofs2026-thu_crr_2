@@ -39,9 +39,9 @@ verificar se com o deploy do backend há alguma mitigation que precisa ser imple
 
 ## 🔍 Operate (5%)
 
-| # | Tarefa | Responsável | Status |
-|---|--------|-------------|--------|
-| O1 | Implementar/documentar estratégia de **backups** | Mateus      | Por começar |
+| # | Tarefa | Responsável | Status      |
+|---|--------|-------------|-------------|
+| O1 | Implementar/documentar estratégia de **backups** | Mateus      | Feito       |
 | O2 | **Vulnerability management** - rever componentes com vulnerabilidades conhecidas (SCA) | joao        | Por começar |
 
 ---
