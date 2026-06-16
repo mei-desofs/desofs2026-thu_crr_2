@@ -277,7 +277,7 @@ jobs:
   dast:
     name: OWASP ZAP baseline scan
     runs-on: ubuntu-latest
-    needs: [integration-tests, frontend-build]
+    needs: [ integration-tests ]
     services:
       mysql:
         image: mysql:8.4
@@ -326,34 +326,22 @@ jobs:
           JWT_SECRET: test_secret
           SECRET_KEY: test_secret
 
-      - name: Install Frontend dependencies
-        run: npm ci
-        working-directory: Frontend
-
-      - name: Build Frontend Application
-        run: npm run build
-        working-directory: Frontend
-
-      - name: Start Frontend preview server
-        run: npx serve -s build -l 4000 &
-        working-directory: Frontend
-
-      - name: Wait for services to be ready
+      - name: Wait for backend to be ready
         run: |
           for i in $(seq 1 20); do
-            if curl -sf http://localhost:3000 && curl -sf http://localhost:4000; then
-              echo "Services are ready"
+            if curl -sf http://localhost:3000; then
+              echo "Backend is ready"
               exit 0
             fi
             sleep 2
           done
-          echo "Services did not start in time"
+          echo "Backend did not start in time"
           exit 1
 
       - name: Run OWASP ZAP baseline scan
         uses: zaproxy/action-baseline@v0.14.0
         with:
-          target: http://localhost:4000
+          target: http://localhost:3000
           fail_action: false
           allow_issue_writing: false
           cmd_options: '-a'
