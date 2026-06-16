@@ -21,8 +21,8 @@ verificar se com o deploy do backend há alguma mitigation que precisa ser imple
 ## 🏗️ Build and Test (35%)
 
 | # | Tarefa                                                               | Responsável     | Status |
-|---|----------------------------------------------------------------------|-----------------|--------|
-| B1 | Aprimorar **pipeline** CI/CD - melhorar automatização, caso possível | Mateus | Por começar |
+|---|----------------------------------------------------------------------|-----------------|-------|
+| B1 | Aprimorar **pipeline** CI/CD - melhorar automatização, caso possível | Mateus | Feito |
 
 ---
 
@@ -32,8 +32,8 @@ verificar se com o deploy do backend há alguma mitigation que precisa ser imple
 |---|--------|--------|--------|
 | P1 | Garantir **logging em produção** (ex: integração com Render ou outro serviço) | Diogo | Feito |
 | P2 | Configurar **auto deploy** (ex: deploy automático via pipeline no Render) | Diogo | Feito |
-| P3 | Documentar **configuration management** (variáveis de ambiente, secrets, etc.) | João T | Por começar |
-| P4 | Avaliar **patch management** - atualização de dependências/componentes vulneráveis | João T | Por começar |
+| P3 | Documentar **configuration management** (variáveis de ambiente, secrets, etc.) | João T | Em processo |
+| P4 | Avaliar **patch management** - atualização de dependências/componentes vulneráveis | João T | Em processo |
 
 ---
 
