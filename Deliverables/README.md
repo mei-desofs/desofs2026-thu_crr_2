@@ -93,3 +93,6 @@
 
 ## Schemas and Validaton
 [Ver documento](Phase_2_pt2/Schemas_and_validation.md) 
+
+## Backup Strategy
+[Ver documento](Phase_2_pt2/Backup_strategy.md) 
