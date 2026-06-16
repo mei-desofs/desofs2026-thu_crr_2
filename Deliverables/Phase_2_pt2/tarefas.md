@@ -11,8 +11,8 @@
 | D1 | Implementar/rever mecanismos de **logging** (requests, erros, eventos de segurança)                                     | Diogo                   | Em processo |
 | D2 | Rever **autorização** - garantir que roles e permissões estão corretamente aplicadas em todos os endpoints (backend)    | joao /mateus            | Concluido   |
 | D3 | Rever **rotas protegidas** - confirmar que nenhuma rota sensível está acessível sem autenticação/autorização (frontend) | Mateus /joao            | Concluido   |
-| D4 | Rever outros pontos de segurança no desenvolvimento **(ver slides das teóricas)**                                       | (joao,wbgtests)Pendente | Pendente    |
-| D5 | Schemas - validação de dados em endpoints e operações                                                                   | ?                       | Por começar |
+| D4 | Rever outros pontos de segurança no desenvolvimento **(ver slides das teóricas)**                                       | (joao,wbgtests)Pendente | Concluido   |
+| D5 | Schemas - validação de dados em endpoints e operações                                                                   | Fabio                   | concluido   |
 
 
 verificar se com o deploy do backend há alguma mitigation que precisa ser implementada
