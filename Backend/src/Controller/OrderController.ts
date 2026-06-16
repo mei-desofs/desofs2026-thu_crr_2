@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { OrderService } from "../Service/OrderService";
 import { OrderStatus } from "../Model/Order";
 import logger from "../utils/logger";
+import { createOrderSchema, updateOrderSchema, updateOrderStatusSchema } from "../Schemas/OrderValidation";
+import { validateOrFail } from "../utils/validateOrFail";
+
 
 export class OrderController {
   static async create(req: Request, res: Response) {
@@ -33,14 +36,16 @@ export class OrderController {
   }
 
   static async update(req: Request, res: Response) {
+    const uv = validateOrFail(updateOrderSchema, req.body, res);
+    if (!uv.ok) return;
     try {
       const { id } = req.params;
-      const order = await OrderService.update(Number(id), req.body);
+      const order = await OrderService.update(Number(id), uv.value);
 
       logger.info("ORDER:UPDATED", {
         orderId: Number(id),
         by: (req as any).user?.id,
-        changes: Object.keys(req.body),
+        changes: Object.keys(uv.value),
       });
 
       return res.status(200).json(order);
@@ -53,20 +58,14 @@ export class OrderController {
   static async updateStatus(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { status } = req.body;
-
-      const allowedStatus: OrderStatus[] = [
-        "pending", "sent", "confirmed", "rejected", "cancelled", "delivered",
-      ];
-
-      if (!allowedStatus.includes(status)) {
-        return res.status(400).json({ message: "Invalid order status" });
-      }
+      const sv = validateOrFail(updateOrderStatusSchema, req.body, res);
+      if (!sv.ok) return;
+      const { status } = sv.value;
 
       const order = await OrderService.updateStatus(Number(id), status);
 
       const logFn = status === "cancelled" || status === "rejected" ? logger.warn.bind(logger) : logger.info.bind(logger);
-        logFn("ORDER:STATUS_CHANGED", {
+      logFn("ORDER:STATUS_CHANGED", {
         orderId: Number(id),
         status,
         by: (req as any).user?.id,

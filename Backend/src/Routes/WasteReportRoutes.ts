@@ -8,70 +8,49 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 
 import { RoleGroups } from "../Config/roles";
 
-
+import { validate } from "../middlewares/validate";
+import {
+    createWasteReportSchema,
+    wasteReportDateQuerySchema,
+    wasteReportStatisticsQuerySchema,
+} from "../Schemas/WasteReportValidation";
+import { mealIdParamSchema } from "../Schemas/common.validation";
 
 const router = Router();
-
-
 
 router.use(apiRateLimiter);
 
 router.use(authMiddleware);
 
-
-
 router.post(
-
-  "/",
-
-  authorizeRoles(...RoleGroups.REFECTORY),
-
-  WasteReportController.createWasteReport,
-
+    "/",
+    validate(createWasteReportSchema),
+    authorizeRoles(...RoleGroups.REFECTORY),
+    WasteReportController.createWasteReport,
 );
-
 router.get(
-
-  "/meal/:mealId",
-
-  authorizeRoles(...RoleGroups.REFECTORY_STATS),
-
-  WasteReportController.getWasteReportsByMeal,
-
+    "/meal/:mealId",
+    validate(mealIdParamSchema, "params"),
+    authorizeRoles(...RoleGroups.REFECTORY_STATS),
+    WasteReportController.getWasteReportsByMeal,
 );
-
 router.get(
-
-  "/date",
-
-  authorizeRoles(...RoleGroups.REFECTORY_STATS),
-
-  WasteReportController.getWasteReportsByDate,
-
+    "/date",
+    validate(wasteReportDateQuerySchema, "query"),
+    authorizeRoles(...RoleGroups.REFECTORY_STATS),
+    WasteReportController.getWasteReportsByDate,
 );
-
 router.get(
-
-  "/consumed-meals",
-
-  authorizeRoles(...RoleGroups.REFECTORY_STATS),
-
-  WasteReportController.getWasteReportsForConsumedMeals,
-
+    "/consumed-meals",
+    validate(wasteReportDateQuerySchema, "query"),
+    authorizeRoles(...RoleGroups.REFECTORY_STATS),
+    WasteReportController.getWasteReportsForConsumedMeals,
 );
-
 router.get(
-
-  "/statistics",
-
-  authorizeRoles(...RoleGroups.REFECTORY_STATS),
-
-  WasteReportController.getWasteReportStatistics,
-
+    "/statistics",
+    validate(wasteReportStatisticsQuerySchema, "query"),
+    authorizeRoles(...RoleGroups.REFECTORY_STATS),
+    WasteReportController.getWasteReportStatistics,
 );
-
-
 
 export default router;
-
-

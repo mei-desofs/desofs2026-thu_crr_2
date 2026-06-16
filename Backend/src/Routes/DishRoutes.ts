@@ -1,27 +1,1 @@
-import { Router } from "express";
-import { DishController } from "../Controller/DishController";
-import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
-import { authorizeRoles } from "../middlewares/authorizeRoles";
-import { RoleGroups } from "../Config/roles";
-
-const router = Router();
-
-router.use(apiRateLimiter);
-router.use(authMiddleware);
-
-router.post("/", authorizeRoles(...RoleGroups.ADMIN_WRITE, ...RoleGroups.NUTRITION), DishController.createDish);
-router.get("/", authorizeRoles(...RoleGroups.NUTRITION, ...RoleGroups.REFECTORY), DishController.listDishes);
-router.get(
-  "/recipe/:id",
-  authorizeRoles(...RoleGroups.REFECTORY_STATS),
-  DishController.getDishByRecipe,
-);
-router.get(
-  "/recommendationsList/:date",
-  authorizeRoles(...RoleGroups.NUTRITION),
-  DishController.getDishRecommendations,
-);
-router.get("/:id", authorizeRoles(...RoleGroups.NUTRITION, ...RoleGroups.REFECTORY), DishController.getDish);
-
-export default router;
-
+import { Router } from "express";import { DishController } from "../Controller/DishController";import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";import { authorizeRoles } from "../middlewares/authorizeRoles";import { RoleGroups } from "../Config/roles";import { validate } from "../middlewares/validate";import { createDishSchema } from "../Schemas/DishValidation";import { idParamSchema } from "../Schemas/common.validation";import Joi from "joi";const router = Router();router.use(apiRateLimiter);router.use(authMiddleware);const dateParamSchema = Joi.object({    date: Joi.date().required(),});router.post(    "/",    validate(createDishSchema),    authorizeRoles(...RoleGroups.ADMIN_WRITE, ...RoleGroups.NUTRITION),    DishController.createDish,);router.get(    "/",    authorizeRoles(...RoleGroups.NUTRITION, ...RoleGroups.REFECTORY),    DishController.listDishes,);router.get(    "/recipe/:id",    validate(idParamSchema, "params"),    authorizeRoles(...RoleGroups.REFECTORY_STATS),    DishController.getDishByRecipe,);router.get(    "/recommendationsList/:date",    validate(dateParamSchema, "params"),    authorizeRoles(...RoleGroups.NUTRITION),    DishController.getDishRecommendations,);router.get(    "/:id",    validate(idParamSchema, "params"),    authorizeRoles(...RoleGroups.NUTRITION, ...RoleGroups.REFECTORY),    DishController.getDish,);export default router;

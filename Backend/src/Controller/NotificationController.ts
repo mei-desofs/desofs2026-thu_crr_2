@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
 import { NotificationService } from "../Service/NotificationService";
+import { createNotificationSchema } from "../Schemas/NotificationValidation";
+import { validateOrFail } from "../utils/validateOrFail";
 
 export class NotificationController {
     static async create(req: Request, res: Response) {
         try {
-            const { userId, title, body } = req.body;
+            const cv = validateOrFail(createNotificationSchema, req.body, res);
+            if (!cv.ok) return;
+            const { userId, title, body } = cv.value;
 
             if (!userId || !title || !body) {
                 return res.status(400).json({
@@ -49,7 +53,7 @@ export class NotificationController {
         }
     }
 
-     static async getByUserId(req: Request, res: Response) {
+    static async getByUserId(req: Request, res: Response) {
         try {
             const { userId } = req.params;
             const { status } = req.query;

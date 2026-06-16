@@ -8,6 +8,8 @@ import { authorizeRoles } from "../middlewares/authorizeRoles";
 
 import { RoleGroups } from "../Config/roles";
 
+import { validate } from "../middlewares/validate";
+import { performanceWasteQuerySchema } from "../Schemas/StatisticsValidation";
 
 
 const router = Router();
@@ -19,19 +21,14 @@ router.use(apiRateLimiter);
 router.use(authMiddleware);
 
 
-
 router.get(
-
-  "/waste",
-
-  authorizeRoles(...RoleGroups.REFECTORY_STATS),
-
-  PerformanceController.getWastePercentage,
-
+    "/waste",
+    validate(performanceWasteQuerySchema, "query"),
+    authorizeRoles(...RoleGroups.REFECTORY_STATS),
+    PerformanceController.getWastePercentage,
 );
 
-
-
 export default router;
+
 
 

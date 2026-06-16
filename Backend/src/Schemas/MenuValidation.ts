@@ -7,3 +7,12 @@ export const createMenuSchema = Joi.object({
     meals: Joi.array().items(Joi.number().integer().positive()).required(),
     canteenId: Joi.number().integer().positive().required(),
 });
+
+export const updateMenuStatusSchema = Joi.object({
+    status: Joi.string().valid("published", "aproved", "pending").required(),
+});
+
+export const currentWeekMenuQuerySchema = Joi.object({
+    menuTypeId: Joi.number().integer().positive().optional(),
+    weekOffset: Joi.number().integer().optional(),
+});

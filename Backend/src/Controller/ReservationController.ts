@@ -1,16 +1,18 @@
 import { Request, Response } from "express";
 import { ReservationService } from "../Service/ReservationService";
 import logger from "../utils/logger";
+import { createReservationSchema, updateReservationStatusSchema, liftTicketsSchema } from "../Schemas/ReservationValidation";
+import { validateOrFail } from "../utils/validateOrFail";
+
 
 const service = new ReservationService();
 
+
 export class ReservationController {
   static async createReservation(req: Request, res: Response) {
-    const { status = "active", reservationDate = new Date(), quantity = 1, mealId, userId, refeitorioId } = req.body;
-
-    if (!mealId || !userId) {
-      return res.status(400).json({ error: "mealId and userId are required" });
-    }
+    const cv = validateOrFail(createReservationSchema, req.body, res);
+    if (!cv.ok) return;
+    const { status = "active", reservationDate = new Date(), quantity = 1, mealId, userId, refeitorioId } = cv.value;
 
     try {
       let finalRefeitorioId = refeitorioId;
@@ -64,7 +66,7 @@ export class ReservationController {
 
   static async cancelReservation(req: Request, res: Response) {
     const id = Number(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+    if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
 
     try {
       const reservation = await service.updateStatus(id, "canceled");
@@ -84,10 +86,10 @@ export class ReservationController {
 
   static async updateStatus(req: Request, res: Response) {
     const id = Number(req.params.id);
-    const { status } = req.body;
-
-    if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
-    if (!status) return res.status(400).json({ error: "Status is required" });
+    if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
+    const uv = validateOrFail(updateReservationStatusSchema, req.body, res);
+    if (!uv.ok) return;
+    const { status } = uv.value;
 
     try {
       const reservation = await service.updateStatus(id, status);
@@ -108,10 +110,10 @@ export class ReservationController {
 
   static async liftTickets(req: Request, res: Response) {
     const id = Number(req.params.id);
-    const { quantity } = req.body;
-
-    if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
-    if (!quantity || quantity < 1) return res.status(400).json({ error: "Quantity is required and must be at least 1" });
+    if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
+    const lv = validateOrFail(liftTicketsSchema, req.body, res);
+    if (!lv.ok) return;
+    const { quantity } = lv.value;
 
     try {
       const reservation = await service.liftTickets(id, quantity);
