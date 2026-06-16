@@ -1,25 +1,1 @@
-import { Router } from "express";
-import { OrderController } from "../Controller/OrderController";
-import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
-import { authorizeRoles } from "../middlewares/authorizeRoles";
-import { requireSelfOrRoles } from "../middlewares/requireSelfOrRoles";
-import { RoleGroups } from "../Config/roles";
-
-const router = Router();
-
-router.use(apiRateLimiter);
-router.use(authMiddleware);
-
-router.post("/", authorizeRoles(...RoleGroups.STOCK), OrderController.create);
-router.put("/:id", authorizeRoles(...RoleGroups.STOCK), OrderController.update);
-router.patch("/:id/status", authorizeRoles(...RoleGroups.ORDERS), OrderController.updateStatus);
-router.delete("/:id", authorizeRoles(...RoleGroups.STOCK), OrderController.delete);
-router.get(
-  "/:userid",
-  requireSelfOrRoles("userid", ...RoleGroups.STOCK),
-  OrderController.getByUserId,
-);
-router.get("/", authorizeRoles(...RoleGroups.STOCK), OrderController.getAll);
-
-export default router;
-
+import { Router } from "express";import { OrderController } from "../Controller/OrderController";import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";import { authorizeRoles } from "../middlewares/authorizeRoles";import { requireSelfOrRoles } from "../middlewares/requireSelfOrRoles";import { RoleGroups } from "../Config/roles";import { validate } from "../middlewares/validate";import {    createOrderSchema,    updateOrderSchema,    updateOrderStatusSchema,} from "../Schemas/OrderValidation";import { idParamSchema } from "../Schemas/common.validation";import Joi from "joi";const router = Router();router.use(apiRateLimiter);router.use(authMiddleware);const userIdParamSchema = Joi.object({    userid: Joi.number().integer().positive().required(),});router.post(    "/",    validate(createOrderSchema),    authorizeRoles(...RoleGroups.STOCK),    OrderController.create,);router.put(    "/:id",    validate(idParamSchema, "params"),    validate(updateOrderSchema),    authorizeRoles(...RoleGroups.STOCK),    OrderController.update,);router.patch(    "/:id/status",    validate(idParamSchema, "params"),    validate(updateOrderStatusSchema),    authorizeRoles(...RoleGroups.ORDERS),    OrderController.updateStatus,);router.delete(    "/:id",    validate(idParamSchema, "params"),    authorizeRoles(...RoleGroups.STOCK),    OrderController.delete,);router.get(    "/:userid",    validate(userIdParamSchema, "params"),    requireSelfOrRoles("userid", ...RoleGroups.STOCK),    OrderController.getByUserId,);router.get("/", authorizeRoles(...RoleGroups.STOCK), OrderController.getAll);export default router;

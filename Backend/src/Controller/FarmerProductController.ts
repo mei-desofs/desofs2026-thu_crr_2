@@ -1,28 +1,16 @@
 import { Request, Response } from "express";
 import { FarmerProductService } from "../Service/FarmerProductsService";
-import Joi from "joi";
+import { createFarmerProductsSchema } from "../Schemas/FarmerProductValidation";
+import { validateOrFail } from "../utils/validateOrFail";
 
 const service = new FarmerProductService();
-
-const productSchema = Joi.object({
-  productId: Joi.number().integer().required(),
-  quantity: Joi.number().positive().required(),
-  unit: Joi.string().required(),
-});
-
-const farmerProductsSchema = Joi.array().items(
-  Joi.object({
-    week: Joi.number().integer().required(),
-    products: Joi.array().items(productSchema).required(),
-  })
-);
 
 export class FarmerProductController {
 
   static async create(req: Request, res: Response) {
-    const { userId, applicationId, farmerProducts } = req.body;
-    const { error } = farmerProductsSchema.validate(farmerProducts);
-    if (error) return res.status(400).json({ error: error.message });
+    const cv = validateOrFail(createFarmerProductsSchema, req.body, res);
+    if (!cv.ok) return;
+    const { userId, applicationId, farmerProducts } = cv.value;
 
     try {
       const result = await service.createFarmerProducts(userId, applicationId, farmerProducts);
@@ -39,7 +27,7 @@ export class FarmerProductController {
 
   static async getByApplication(req: Request, res: Response) {
     const applicationId = Number(req.params.applicationId);
-    if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
+    if (isNaN(applicationId) || applicationId <= 0) return res.status(400).json({ error: "Invalid applicationId" });
 
     const result = await service.getByApplication(applicationId);
     res.json(result);

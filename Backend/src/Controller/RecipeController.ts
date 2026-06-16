@@ -1,17 +1,18 @@
 import {RecipeService} from "../Service/RecipeService";
 import {Request, Response} from "express";
 import {createRecipeSchema} from "../Schemas/RecipeValidation";
+import { validateOrFail } from "../utils/validateOrFail";
 
 const service = new RecipeService()
 
 export class RecipeController {
 
     static async createRecipe(req: Request, res: Response) {
-        const { error } = createRecipeSchema.validate(req.body);
-        if (error) return res.status(400).json({ error: error.message });
+        const v = validateOrFail(createRecipeSchema, req.body, res);
+        if (!v.ok) return;
 
         try {
-            const result = await service.createRecipe(req.body);
+            const result = await service.createRecipe(v.value);
             res.json(result);
         } catch (err: any) {
             switch (err.message) {
@@ -28,7 +29,7 @@ export class RecipeController {
 
     static async getRecipe(req: Request, res: Response) {
         const id = Number(req.params.id);
-        if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+        if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
 
         try {
             const recipe = await service.getRecipeById(id);

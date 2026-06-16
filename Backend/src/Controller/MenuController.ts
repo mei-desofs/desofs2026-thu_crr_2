@@ -2,20 +2,22 @@ import {MenuService} from "../Service/MenuService";
 import {Request, Response} from "express";
 import {createMenuSchema} from "../Schemas/MenuValidation";
 import { logRequestIdentifiers } from "../utils/safeDebugLog";
+import { updateMenuStatusSchema } from "../Schemas/MenuValidation";
+import { validateOrFail } from "../utils/validateOrFail";
 
 const service = new MenuService()
 
 export class MenuController {
 
     static async createMenu(req: Request, res: Response) {
-        const { error } = createMenuSchema.validate(req.body);
-        if (error) return res.status(400).json({ error: error.message });
+        const v = validateOrFail(createMenuSchema, req.body, res);
+        if (!v.ok) return;
 
         try {
             logRequestIdentifiers("MenuController.createMenu", req); // MT25
 
             const menuData = {
-                ...req.body,
+                ...v.value,
             };
 
             const result = await service.createMenu(menuData);
@@ -45,7 +47,7 @@ export class MenuController {
 
     static async getMenu(req: Request, res: Response) {
         const id = Number(req.params.id);
-        if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+        if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
 
         try {
             const menu = await service.getMenuById(id);
@@ -61,14 +63,14 @@ export class MenuController {
         try {
             const menuTypeId = req.query.menuTypeId ? Number(req.query.menuTypeId) : undefined;
             const weekOffset = req.query.weekOffset ? Number(req.query.weekOffset) : 0;
-            
+
             if (menuTypeId !== undefined && isNaN(menuTypeId)) {
                 return res.status(400).json({ error: "Invalid menuTypeId" });
             }
             if (isNaN(weekOffset)) {
                 return res.status(400).json({ error: "Invalid weekOffset" });
             }
-            
+
             const menu = await service.getCurrentWeekMenuDetailed(menuTypeId, weekOffset);
             res.json(menu);
         } catch (err: any) {
@@ -81,8 +83,10 @@ export class MenuController {
 
     static async updateMenuStatus(req: Request, res: Response) {
         const id = Number(req.params.id);
-        const { status } = req.body;
-        if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+        const sv = validateOrFail(updateMenuStatusSchema, req.body, res);
+        if (!sv.ok) return;
+        const { status } = sv.value;
+        if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
         if (!["published", "aproved", "pending"].includes(status)) {
             return res.status(400).json({ error: "Invalid status value" });
         }
@@ -99,7 +103,7 @@ export class MenuController {
 
     static async getMenusByCanteen(req: Request, res: Response) {
         const canteenId = Number(req.params.canteenId);
-        if (isNaN(canteenId)) return res.status(400).json({ error: "Invalid canteen ID" });
+        if (isNaN(canteenId) || canteenId <= 0) return res.status(400).json({ error: "Invalid canteen ID" });
         try {
             const menus = await service.getMenusByCanteen(canteenId);
             res.json(menus);

@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { UserService } from "../Service/UserService";
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../middlewares/authMiddleware"; //mt7
+import { registerUserSchema, loginSchema } from "../Schemas/UserValidation";
+import { validateOrFail } from "../utils/validateOrFail"; //mt7
+
 
 export class UserController {
   static async register(req: Request, res: Response) {
@@ -19,11 +22,14 @@ export class UserController {
     if (role === "CanteenManager" && !canteenId) {
       return res.status(400).json({ message: "canteenId é obrigatório para CanteenManager." });
     }
-    
+
     // Validar refeitorioId se o role for RefectoryManager ou RefectoryStaff
     if ((role === "RefectoryManager" || role === "RefectoryStaff") && !refeitorioId) {
       return res.status(400).json({ message: "refeitorioId é obrigatório para RefectoryManager e RefectoryStaff." });
     }
+
+    const rv = validateOrFail(registerUserSchema, req.body, res);
+    if (!rv.ok) return;
 
     const existingUser = await UserService.findByEmail(email);
     if (existingUser) {
@@ -32,14 +38,14 @@ export class UserController {
 
     try {
       const user = await UserService.createUser(name, email, password, role, refeitorioId, canteenId);
-      return res.status(201).json({ 
-        id: user.id, 
-        name: user.name, 
-        email: user.email, 
-        role: user.role, 
-        status: user.status, 
+      return res.status(201).json({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        status: user.status,
         refeitorioId: user.refeitorioId,
-        canteenId: user.canteenId 
+        canteenId: user.canteenId
       });
     } catch (err) {
       console.error("Error creating user:", err);
@@ -48,15 +54,17 @@ export class UserController {
   }
 
   static async login(req: Request, res: Response) {
+    const lv = validateOrFail(loginSchema, req.body, res);
+    if (!lv.ok) return;
     try {
-      const { email, password } = req.body;
+      const { email, password } = lv.value;
 
       const user = await UserService.login(email, password);
 
       const token = jwt.sign(
-        { id: user.id, role: user.role },
-        jwtSecret, //mt7
-        { expiresIn: "1d" }
+          { id: user.id, role: user.role },
+          jwtSecret, //mt7
+          { expiresIn: "1d" }
       );
 
       res.json({

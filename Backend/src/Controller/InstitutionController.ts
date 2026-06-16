@@ -1,18 +1,14 @@
 import { Request, Response } from "express";
 import { InstitutionService } from "../Service/InstitutionService";
+import { createInstitutionSchema } from "../Schemas/InstitutionValidation";
+import { validateOrFail } from "../utils/validateOrFail";
 
 export class InstitutionController {
   static async createInstitution(req: Request, res: Response) {
     try {
-      const { name, idmenutype, location, freguesia, municipio } = req.body;
-
-      if (!name || !idmenutype || !location) {
-        return res.status(400).json({ message: "Nome, idmenutype e localização são obrigatórios." });
-      }
-
-      if (typeof idmenutype !== "number" || idmenutype <= 0) {
-        return res.status(400).json({ message: "idmenutype deve ser um número positivo válido." });
-      }
+      const cv = validateOrFail(createInstitutionSchema, req.body, res);
+      if (!cv.ok) return;
+      const { name, idmenutype, location, freguesia, municipio } = cv.value;
 
       const institution = await InstitutionService.createInstitution({
         name,

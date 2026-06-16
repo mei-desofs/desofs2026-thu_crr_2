@@ -1,17 +1,19 @@
 import {StockService} from "../Service/StockService";
 import {Request, Response} from "express";
 import {createStockSchema} from "../Schemas/StockValidation";
+import { validateOrFail } from "../utils/validateOrFail";
+
 
 const service = new StockService();
 
 export class StockController {
 
     static async createStock(req: Request, res: Response) {
-        const { error } = createStockSchema.validate(req.body);
-        if (error) return res.status(400).json({ error: error.message });
+        const v = validateOrFail(createStockSchema, req.body, res);
+        if (!v.ok) return;
 
         try {
-            const result = await service.createStock(req.body);
+            const result = await service.createStock(v.value);
             res.json(result);
         } catch (err: any) {
             switch (err.message) {
@@ -38,7 +40,7 @@ export class StockController {
 
     static async getStock(req: Request, res: Response) {
         const id = Number(req.params.id);
-        if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+        if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
 
         try {
             const stock = await service.getStockById(id);
