@@ -1,22 +1,1 @@
-import { Router } from "express";
-import { CanteenController } from "../Controller/CanteenController";
-import { ReservationQuantitiesCanteenController } from "../Controller/ReservationQuantitiesCanteenController";
-import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
-
-const router = Router();
-
-router.use(apiRateLimiter);
-router.use(authMiddleware);
-
-router.post("/", CanteenController.createCanteen);
-router.get("/", CanteenController.getAllCanteens);
-router.get("/:canteenId/refeitorios", CanteenController.getCanteenRefeitorios);
-router.get("/:canteenId/production-statistics", ReservationQuantitiesCanteenController.getCanteenProductionStatistics);
-router.get("/:canteenId/ingredients-statistics", ReservationQuantitiesCanteenController.getCanteenIngredientsStatistics);
-router.get("/:id", CanteenController.getCanteenById);
-router.post("/associate-refeitorio", CanteenController.associateRefeitorio);
-router.post("/associate-multiple-refeitorios", CanteenController.associateMultipleRefeitorios);
-
-export default router;
-
-
+import { Router } from "express";import { CanteenController } from "../Controller/CanteenController";import { ReservationQuantitiesCanteenController } from "../Controller/ReservationQuantitiesCanteenController";import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";import { authorizeRoles } from "../middlewares/authorizeRoles";import { Role, RoleGroups } from "../Config/roles";import { validate } from "../middlewares/validate";import {    createCanteenSchema,    associateRefeitorioSchema,    associateMultipleRefeitoriosSchema,} from "../Schemas/CanteenValidation";import {    idParamSchema,    canteenIdParamSchema,} from "../Schemas/common.validation";const router = Router();router.use(apiRateLimiter);router.use(authMiddleware);const canteenRead = authorizeRoles(  ...RoleGroups.NUTRITION,  ...RoleGroups.CANTEEN_MGMT,  Role.Student,  Role.Supplier,);router.post(    "/",    validate(createCanteenSchema),    authorizeRoles(...RoleGroups.ADMIN_WRITE),    CanteenController.createCanteen,);router.get("/", canteenRead, CanteenController.getAllCanteens);router.get(    "/:canteenId/refeitorios",    validate(canteenIdParamSchema, "params"),    canteenRead,    CanteenController.getCanteenRefeitorios,);router.get(    "/:canteenId/production-statistics",    validate(canteenIdParamSchema, "params"),    authorizeRoles(...RoleGroups.CANTEEN_MGMT),    ReservationQuantitiesCanteenController.getCanteenProductionStatistics,);router.get(    "/:canteenId/ingredients-statistics",    validate(canteenIdParamSchema, "params"),    authorizeRoles(...RoleGroups.CANTEEN_MGMT),    ReservationQuantitiesCanteenController.getCanteenIngredientsStatistics,);router.get(    "/:id",    validate(idParamSchema, "params"),    canteenRead,    CanteenController.getCanteenById,);router.post(    "/associate-refeitorio",    validate(associateRefeitorioSchema),    authorizeRoles(...RoleGroups.ADMIN_WRITE),    CanteenController.associateRefeitorio,);router.post(    "/associate-multiple-refeitorios",    validate(associateMultipleRefeitoriosSchema),    authorizeRoles(...RoleGroups.ADMIN_WRITE),    CanteenController.associateMultipleRefeitorios,);export default router;

@@ -1,16 +1,1 @@
-import { Router } from "express";
-import { MealController } from "../Controller/MealController";
-import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
-
-const router = Router();
-
-router.use(apiRateLimiter);
-router.use(authMiddleware);
-
-// CRUD Products
-router.post("/", MealController.createMeal);
-router.get("/", MealController.listMeals);
-router.get("/canteen/:canteenId/statistics", MealController.getCanteenStatistics);
-router.get("/:id", MealController.getMeal);
-
-export default router;
+import { Router } from "express";import { MealController } from "../Controller/MealController";import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";import { authorizeRoles } from "../middlewares/authorizeRoles";import { Role, RoleGroups } from "../Config/roles";import { validate } from "../middlewares/validate";import { createMealSchema } from "../Schemas/MealValidation";import {    idParamSchema,    canteenIdParamSchema,} from "../Schemas/common.validation";import Joi from "joi";const router = Router();router.use(apiRateLimiter);router.use(authMiddleware);const canteenStatisticsQuerySchema = Joi.object({    date: Joi.date().optional(),});router.post(    "/",    validate(createMealSchema),    authorizeRoles(...RoleGroups.NUTRITION),    MealController.createMeal,);router.get(    "/",    authorizeRoles(...RoleGroups.NUTRITION, ...RoleGroups.CANTEEN_MGMT),    MealController.listMeals,);router.get(    "/canteen/:canteenId/statistics",    validate(canteenIdParamSchema, "params"),    validate(canteenStatisticsQuerySchema, "query"),    authorizeRoles(...RoleGroups.CANTEEN_MGMT),    MealController.getCanteenStatistics,);router.get(    "/:id",    validate(idParamSchema, "params"),    authorizeRoles(...RoleGroups.NUTRITION, ...RoleGroups.MENU_READ),    MealController.getMeal,);export default router;

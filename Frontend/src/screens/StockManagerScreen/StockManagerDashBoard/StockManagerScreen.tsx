@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Bell, LogOut, Box, Leaf } from 'lucide-react';
 import { stockManagerStyles } from './StockManagerScreen.styles';
@@ -22,10 +23,7 @@ export default function StockManagerDashboard() {
     navigate('/sm-orders');
   };
 
-  const handleLogout = () => {
-    // Lógica de logout
-    navigate('/login');
-  };
+  const handleLogout = useLogout();
 
   useEffect(() => {
     // Fetch notifications with status "seent" for the supplier

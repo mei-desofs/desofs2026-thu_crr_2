@@ -1,17 +1,18 @@
 import {ParishService} from "../Service/ParishService";
 import {Request, Response} from "express";
 import {createParishSchema} from "../Schemas/ParishValidation";
+import { validateOrFail } from "../utils/validateOrFail";
 
 const service = new ParishService();
 
 export class ParishController {
 
     static async createParish(req: Request, res: Response) {
-        const { error } = createParishSchema.validate(req.body);
-        if (error) return res.status(400).json({ error: error.message });
+        const v = validateOrFail(createParishSchema, req.body, res);
+        if (!v.ok) return;
 
         try {
-            const result = await service.createParish(req.body);
+            const result = await service.createParish(v.value);
             res.json(result);
         } catch (err: any) {
             switch (err.message) {
@@ -28,7 +29,7 @@ export class ParishController {
 
     static async getParish(req: Request, res: Response) {
         const id = Number(req.params.id);
-        if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+        if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
 
         try {
             const parish = await service.getParishById(id);

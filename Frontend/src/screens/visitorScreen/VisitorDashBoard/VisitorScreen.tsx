@@ -1,3 +1,4 @@
+import { useLogout } from "../../../util/useLogout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Bell, LogOut, Newspaper, Leaf, CheckCircle2, XCircle, Clock, FileCheck } from 'lucide-react';
 import { visitorStyles } from './VisitorScreen.styles';
@@ -31,9 +32,7 @@ export default function VisitorDashboard() {
     }
   }, [user?.id]);
 
-  const handleLogout = () => {
-    navigate('/login');
-  };
+  const handleLogout = useLogout();
 
   // Define se a candidatura pode ser editada
   const canEditApplication = (application: Application | null) => {

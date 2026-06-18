@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
 import { RefeitorioService } from "../Service/RefeitorioService";
+import { createRefeitorioSchema } from "../Schemas/RefeitorioValidation";
+import { validateOrFail } from "../utils/validateOrFail";
+
 
 export class RefeitorioController {
   static async createRefeitorio(req: Request, res: Response) {
     try {
-      const { name, institutionId, location, freguesia, municipio } = req.body;
-
-      if (!name || !location) {
-        return res.status(400).json({ message: "Nome e localização são obrigatórios." });
-      }
+      const cv = validateOrFail(createRefeitorioSchema, req.body, res);
+      if (!cv.ok) return;
+      const { name, institutionId, location, freguesia, municipio } = cv.value;
 
       const refeitorio = await RefeitorioService.createRefeitorio({
         name,

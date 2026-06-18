@@ -9,6 +9,7 @@ import { productService } from "../../../services/productService";
 import type { Application } from "../../../models/Application";
 import { applicationService } from "../../../services/applicationService";
 import { useNavigate } from "react-router-dom";
+import { useLogout } from "../../../util/useLogout";
 import axios from "axios";
 import { API_BASE_URL } from "../../../../config";
 import { FREGUESIAS } from "../../../models/FreguesiasByMunicipio";
@@ -47,6 +48,7 @@ const getWeekDateRange = (weekNumber: number, year: number = 2025): string => {
 export default function ApplicationForm() {
   const user = useSelector((state: any) => state.auth.user);
   const navigate = useNavigate();
+  const handleLogout = useLogout();
 
   const [currentApplication, setCurrentApplication] =
     useState<Application | null>(null);
@@ -347,7 +349,7 @@ export default function ApplicationForm() {
           <button style={ApplicationStyles.iconButton}>
             <Bell size={20} />
           </button>
-          <button style={ApplicationStyles.iconButton}>
+          <button style={ApplicationStyles.iconButton} onClick={handleLogout}>
             <LogOut size={20} />
           </button>
         </div>

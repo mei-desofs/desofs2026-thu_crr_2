@@ -1,15 +1,1 @@
-import { Router } from "express";
-import { InstitutionController } from "../Controller/InstitutionController";
-import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
-
-const router = Router();
-
-router.use(apiRateLimiter);
-router.use(authMiddleware);
-
-router.post("/", InstitutionController.createInstitution);
-router.get("/", InstitutionController.getAllInstitutions);
-router.get("/:id", InstitutionController.getInstitutionById);
-
-export default router;
-
+import { Router } from "express";import { InstitutionController } from "../Controller/InstitutionController";import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";import { authorizeRoles } from "../middlewares/authorizeRoles";import { Role, RoleGroups } from "../Config/roles";import { validate } from "../middlewares/validate";import { createInstitutionSchema } from "../Schemas/InstitutionValidation";import { idParamSchema } from "../Schemas/common.validation";const router = Router();router.use(apiRateLimiter);router.use(authMiddleware);router.post(    "/",    validate(createInstitutionSchema),    authorizeRoles(...RoleGroups.ADMIN_WRITE),    InstitutionController.createInstitution,);router.get(    "/",    authorizeRoles(...RoleGroups.CANTEEN_MGMT),    InstitutionController.getAllInstitutions,);router.get(    "/:id",    validate(idParamSchema, "params"),    authorizeRoles(Role.Supplier, ...RoleGroups.CANTEEN_MGMT),    InstitutionController.getInstitutionById,);export default router;

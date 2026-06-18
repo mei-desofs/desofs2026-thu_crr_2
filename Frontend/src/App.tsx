@@ -15,7 +15,8 @@ import ParishesScreen from "./screens/networkScreen/parishListScreen/ParishesLis
 import ApplicationEvaluationScreen from "./screens/networkScreen/applicationEvaluation/ApplicationEvaluationScreen";
 import PerformanceScreen from "./screens/networkScreen/performanceScreen/PerformanceScreen";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import ProtectedRoute from "./util/ProtectedRoutes";
+import ProtectedRoute, { GuestRoute } from "./util/ProtectedRoutes";
+import { routeAccess } from "./config/routeAccess";
 import StatisticsDashboard from "./screens/statistics/dashboard/Statistics";
 import BioPercentageScreen from "./screens/statistics/bioPercentage/BioPercentage";
 import WastePercentageScreen from "./screens/statistics/wastePercentage/WastePercentageScreen";
@@ -31,67 +32,72 @@ import CanteenStatisticsScreen from "./screens/canteenManagerScreen/statisticsSc
 import NetworkCanteenStatisticsScreen from "./screens/networkScreen/canteenStatisticsScreen/NetworkCanteenStatisticsScreen";
 import NetworkRefectoryStatisticsScreen from "./screens/networkScreen/refectoryStatisticsScreen/NetworkRefectoryStatisticsScreen";
 import NetworkProducerStatisticsScreen from "./screens/networkScreen/producerStatisticsScreen/NetworkProducerStatisticsScreen";
+import type { ReactNode } from "react";
+
+/** Screen registry — path must exist in config/routeAccess.ts */
+const screens: Record<string, ReactNode> = {
+  "/supplier-dashboard": <SupplierDashboard />,
+  "/network-dashboard": <NetworkDashboard />,
+  "/suppliers-list": <SuppliersScreen />,
+  "/parishes-list": <ParishesScreen />,
+  "/application-evaluation": <ApplicationEvaluationScreen />,
+  "/performance": <PerformanceScreen />,
+  "/nutritionist-dashboard": <NutritionistDashboard />,
+  "/stockmanager-dashboard": <StockManagerDashboard />,
+  "/create-menu": <MenuDashboard />,
+  "/student-dashboard": <StudentDashboard />,
+  "/nursinghome-dashboard": <NursingHomeDashboard />,
+  "/refectorystaff-dashboard": <RefectoryStaffDashboard />,
+  "/weekmenu": <WeekMenuScreen />,
+  "/reservation": <ReservationScreen />,
+  "/reservations-view": <ReservationsViewScreen />,
+  "/statistics-dashboard": <StatisticsDashboard />,
+  "/bioPercentage-screen": <BioPercentageScreen />,
+  "/waste-percentage-screen": <WastePercentageScreen />,
+  "/orders": <SupplierOrders />,
+  "/sm-orders": <StockManagerOrders />,
+  "/canteenmanager-dashboard": <CanteenManagerDashboard />,
+  "/suppliers-list-cm": <SuppliersList />,
+  "/parishes-list-cm": <ParishesList />,
+  "/canteen-statistics": <CanteenStatisticsScreen />,
+  "/refectorymanager-dashboard": <RefectoryManagerDashboard />,
+  "/network-canteen-statistics": <NetworkCanteenStatisticsScreen />,
+  "/network-refectory-statistics": <NetworkRefectoryStatisticsScreen />,
+  "/network-producer-statistics": <NetworkProducerStatisticsScreen />,
+  "/application": <ApplicationForm />,
+  "/visitor-dashboard": <VisitorDashboard />,
+};
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rota padrão - redireciona para login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-        
-        {/* Página de Login */}
-        <Route path="/login" element={<Login />} />
-
-        {/* Dashboards por Role */}
-        <Route path="/supplier-dashboard" element={<SupplierDashboard />} />
-        <Route path="/network-dashboard" element={<NetworkDashboard />} />
-        <Route path="/suppliers-list" element={<SuppliersScreen />} />
-        <Route path="/parishes-list" element={<ParishesScreen />} />
-        <Route path="/application-evaluation" element={<ApplicationEvaluationScreen />} />
-        <Route path="/performance" element={<PerformanceScreen />} />
-        <Route path="/nutritionist-dashboard" element={<NutritionistDashboard />} />
-        <Route path="/stockmanager-dashboard" element={<StockManagerDashboard />} />
-        <Route path="/create-menu" element={<MenuDashboard />} />
-        <Route path="/student-dashboard" element={<StudentDashboard />} />
-        <Route path="/nursinghome-dashboard" element={<NursingHomeDashboard />} />
-        <Route path="/refectorystaff-dashboard" element={<RefectoryStaffDashboard />} />
-        <Route path="/weekmenu" element={<WeekMenuScreen />} />
-        <Route path="/reservation" element={<ReservationScreen />} />
-        <Route path="/reservations-view" element={<ReservationsViewScreen />} />
-        <Route path="/statistics-dashboard" element={<StatisticsDashboard />} />
-        <Route path="/bioPercentage-screen" element={<BioPercentageScreen />} />
-        <Route path="/waste-percentage-screen" element={<WastePercentageScreen />} />
-        <Route path="/orders" element={<SupplierOrders />} />
-        <Route path="/sm-orders" element={<StockManagerOrders />} />
-        <Route path="/canteenmanager-dashboard" element={<CanteenManagerDashboard />} />
-        <Route path="/suppliers-list-cm" element={<SuppliersList />} />
-        <Route path="/parishes-list-cm" element={<ParishesList />} />
-        <Route path="/canteen-statistics" element={<CanteenStatisticsScreen />} />
-        <Route path="/refectorymanager-dashboard" element={<RefectoryManagerDashboard />} />
-        <Route path="/network-canteen-statistics" element={<NetworkCanteenStatisticsScreen />} />
-        <Route path="/network-refectory-statistics" element={<NetworkRefectoryStatisticsScreen />} />
-        <Route path="/network-producer-statistics" element={<NetworkProducerStatisticsScreen />} />
-         {/* Rota protegida para visitor */}
         <Route
-          path="/application"
+          path="/login"
           element={
-            <ProtectedRoute allowedRoles={["Visitor"]}>
-              <ApplicationForm />
-            </ProtectedRoute>
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
           }
         />
 
-        <Route
-          path="/visitor-dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["Visitor"]}>
-              <VisitorDashboard />
-            </ProtectedRoute>
-          }
-        />
+        {Object.entries(routeAccess).map(([path, allowedRoles]) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <ProtectedRoute allowedRoles={allowedRoles}>
+                {screens[path]}
+              </ProtectedRoute>
+            }
+          />
+        ))}
 
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
+
 export default App;

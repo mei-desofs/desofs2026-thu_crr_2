@@ -5,7 +5,8 @@ import { loginStyles } from "./login.styles";
 import { authService } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login } from "../../store/authSlice"; 
+import { login } from "../../store/authSlice";
+import { getDashboardPathForRole } from "../../config/roles";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -28,47 +29,12 @@ export default function Login() {
     // Faz login e recebe o utilizador
     const user = await authService.login(username, password);
     dispatch(login(user));
-    // Redireciona conforme a role
-    console.log("User role:", user);
-    switch (user.role) {
-      case "Supplier":
-        navigate("/supplier-dashboard");
-        break;
-      case "NetworkManager":
-        navigate("/network-dashboard");
-        break;
-      case "Nutritionist":
-        navigate("/nutritionist-dashboard");
-        break;
-      case "Student":
-        navigate("/student-dashboard");
-        break;
-      case "NursingHome":
-        navigate("/nursinghome-dashboard");
-        break;
-      case "RefectoryStaff":
-        navigate("/refectorystaff-dashboard");
-        break;
-      case "Visitor":
-        navigate("/visitor-dashboard");
-        break;
-      case "StockManager":
-        navigate("/stockmanager-dashboard");
-        break;
-      case "CanteenManager":
-        navigate("/canteenmanager-dashboard");
-        break;
-      case "RefectoryManager":
-        navigate("/refectorymanager-dashboard");
-        break;
-      default:
-        navigate("/");
-    }
-
+    navigate(getDashboardPathForRole(user.role));
   } catch (err: any) {
     setError(err.response?.data?.message || "Erro ao fazer login. Tente novamente.");
+  } finally {
     setLoading(false);
-  } 
+  }
 };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {

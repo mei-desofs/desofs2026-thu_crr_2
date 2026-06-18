@@ -6,26 +6,54 @@ import {
   loginRateLimiter,
 } from "../middlewares/authMiddleware";
 import { loginLogger } from "../middlewares/securityLogger";
+import { authorizeRoles } from "../middlewares/authorizeRoles";
+import { requireSelfOrRoles } from "../middlewares/requireSelfOrRoles";
+import { RoleGroups } from "../Config/roles";
+
+import { validate } from "../middlewares/validate";
+import {
+  registerUserSchema,
+  loginSchema,
+} from "../Schemas/UserValidation";
+import { idParamSchema } from "../Schemas/common.validation";
+
 
 const router = Router();
 
 router.use(apiRateLimiter);
 
-router.post("/register", UserController.register);
+
+router.post("/register", validate(registerUserSchema), UserController.register);
 
 // loginLogger interceta a resposta para registar sucesso/falha
 // onRateLimitHit é chamado pelo rate limiter quando o limite é atingido
 router.post(
-  "/login",
-  loginRateLimiter,
-  loginLogger,
-  UserController.login
+    "/login",
+    loginRateLimiter,
+    loginLogger,
+    validate(loginSchema),
+    UserController.login
 );
 
 router.use(authMiddleware);
 
-router.get("/:id", UserController.getById);
-router.patch("/startQuarantine/:id", UserController.startQuarantine);
-router.patch("/endQuarantine/:id", UserController.endQuarantine);
+router.get(
+    "/:id",
+    validate(idParamSchema, "params"),
+    requireSelfOrRoles("id", ...RoleGroups.CANTEEN_MGMT, ...RoleGroups.STOCK),
+    UserController.getById,
+);
+router.patch(
+    "/startQuarantine/:id",
+    validate(idParamSchema, "params"),
+    authorizeRoles(...RoleGroups.CANTEEN_MGMT),
+    UserController.startQuarantine,
+);
+router.patch(
+    "/endQuarantine/:id",
+    validate(idParamSchema, "params"),
+    authorizeRoles(...RoleGroups.CANTEEN_MGMT),
+    UserController.endQuarantine,
+);
 
 export default router;

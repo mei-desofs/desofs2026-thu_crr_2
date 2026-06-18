@@ -1,18 +1,14 @@
 import { Request, Response } from "express";
 import { CanteenService } from "../Service/CanteenService";
+import { createCanteenSchema, associateRefeitorioSchema, associateMultipleRefeitoriosSchema } from "../Schemas/CanteenValidation";
+import { validateOrFail } from "../utils/validateOrFail";
 
 export class CanteenController {
   static async createCanteen(req: Request, res: Response) {
     try {
-      const { name, institutionId, idmenutype, location, freguesia, municipio } = req.body;
-
-      if (!name || !idmenutype || !location) {
-        return res.status(400).json({ message: "Nome, idmenutype e localização são obrigatórios." });
-      }
-
-      if (typeof idmenutype !== "number" || idmenutype <= 0) {
-        return res.status(400).json({ message: "idmenutype deve ser um número positivo válido." });
-      }
+      const cv = validateOrFail(createCanteenSchema, req.body, res);
+      if (!cv.ok) return;
+      const { name, institutionId, idmenutype, location, freguesia, municipio } = cv.value;
 
       const canteen = await CanteenService.createCanteen({
         name,
@@ -46,24 +42,24 @@ export class CanteenController {
     }
   }
 
-    static async getCanteenRefeitorios(req: Request, res: Response) {
-      const canteenId = Number(req.params.canteenId);
-      if (isNaN(canteenId)) {
-        return res.status(400).json({ message: "canteenId inválido." });
-      }
-
-      try {
-        const refeitorios = await CanteenService.getCanteenRefeitorios(canteenId);
-        res.json(refeitorios);
-      } catch (err: any) {
-        if (err.message === "CANTEEN_NOT_FOUND") {
-          return res.status(404).json({ message: "Cantina não encontrada." });
-        }
-        res.status(500).json({ message: "Erro interno do servidor." });
-      }
+  static async getCanteenRefeitorios(req: Request, res: Response) {
+    const canteenId = Number(req.params.canteenId);
+    if (isNaN(canteenId) || canteenId <= 0) {
+      return res.status(400).json({ message: "canteenId inválido." });
     }
 
-    static async getCanteenById(req: Request, res: Response) {
+    try {
+      const refeitorios = await CanteenService.getCanteenRefeitorios(canteenId);
+      res.json(refeitorios);
+    } catch (err: any) {
+      if (err.message === "CANTEEN_NOT_FOUND") {
+        return res.status(404).json({ message: "Cantina não encontrada." });
+      }
+      res.status(500).json({ message: "Erro interno do servidor." });
+    }
+  }
+
+  static async getCanteenById(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const canteen = await CanteenService.getCanteenById(Number(id));
@@ -81,15 +77,13 @@ export class CanteenController {
 
   static async associateRefeitorio(req: Request, res: Response) {
     try {
-      const { canteenId, refeitorioId } = req.body;
-
-      if (!canteenId || !refeitorioId) {
-        return res.status(400).json({ message: "canteenId e refeitorioId são obrigatórios." });
-      }
+      const av = validateOrFail(associateRefeitorioSchema, req.body, res);
+      if (!av.ok) return;
+      const { canteenId, refeitorioId } = av.value;
 
       const result = await CanteenService.associateRefeitorio(
-        Number(canteenId),
-        Number(refeitorioId)
+          Number(canteenId),
+          Number(refeitorioId)
       );
 
       return res.status(201).json(result);
@@ -112,19 +106,13 @@ export class CanteenController {
 
   static async associateMultipleRefeitorios(req: Request, res: Response) {
     try {
-      const { canteenId, refeitorioIds } = req.body;
-
-      if (!canteenId || !refeitorioIds) {
-        return res.status(400).json({ message: "canteenId e refeitorioIds (array) são obrigatórios." });
-      }
-
-      if (!Array.isArray(refeitorioIds)) {
-        return res.status(400).json({ message: "refeitorioIds deve ser um array." });
-      }
+      const mv = validateOrFail(associateMultipleRefeitoriosSchema, req.body, res);
+      if (!mv.ok) return;
+      const { canteenId, refeitorioIds } = mv.value;
 
       const result = await CanteenService.associateMultipleRefeitorios(
-        Number(canteenId),
-        refeitorioIds.map((id: any) => Number(id))
+          Number(canteenId),
+          refeitorioIds.map((id: any) => Number(id))
       );
 
       return res.status(201).json(result);

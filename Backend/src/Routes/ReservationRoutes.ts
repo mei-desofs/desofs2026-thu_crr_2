@@ -1,18 +1,1 @@
-import { Router } from "express";
-import { ReservationController } from "../Controller/ReservationController";
-import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
-
-const router = Router();
-
-router.use(apiRateLimiter);
-router.use(authMiddleware);
-
-router.post("/", ReservationController.createReservation);
-router.get("/", ReservationController.listReservations);
-router.patch("/:id/cancel", ReservationController.cancelReservation);
-router.patch("/:id/status", ReservationController.updateStatus);
-router.post("/:id/lift", ReservationController.liftTickets);
-
-export default router;
-
-
+import { Router } from "express";import { ReservationController } from "../Controller/ReservationController";import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";import { authorizeRoles } from "../middlewares/authorizeRoles";import { Role, RoleGroups } from "../Config/roles";import { validate } from "../middlewares/validate";import {    createReservationSchema,    updateReservationStatusSchema,    liftTicketsSchema,    listReservationsQuerySchema,} from "../Schemas/ReservationValidation";import { idParamSchema } from "../Schemas/common.validation";const router = Router();router.use(apiRateLimiter);router.use(authMiddleware);router.post(    "/",    validate(createReservationSchema),    authorizeRoles(Role.Student, Role.NursingHome),    ReservationController.createReservation,);router.get(    "/",    validate(listReservationsQuerySchema, "query"),    authorizeRoles(...RoleGroups.RESERVATIONS),    ReservationController.listReservations,);router.patch(    "/:id/cancel",    validate(idParamSchema, "params"),    authorizeRoles(Role.Student, Role.NursingHome),    ReservationController.cancelReservation,);router.patch(    "/:id/status",    validate(idParamSchema, "params"),    validate(updateReservationStatusSchema),    authorizeRoles(...RoleGroups.REFECTORY, ...RoleGroups.NETWORK),    ReservationController.updateStatus,);router.post(    "/:id/lift",    validate(idParamSchema, "params"),    validate(liftTicketsSchema),    authorizeRoles(...RoleGroups.REFECTORY),    ReservationController.liftTickets,);export default router;

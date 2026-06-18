@@ -8,6 +8,7 @@
     "test:watch": "vitest",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:integration:watch": "vitest --config vitest.integration.config.ts",
+    "test:box": "vitest run test/BoxTesting",
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node index.ts"
@@ -34,10 +35,14 @@
     "nodemailer": "^8.0.7",
     "p-limit": "^7.1.1",
     "recharts": "^3.5.1",
-    "sequelize": "^6.37.7",
+    "sequelize": "^6.37.8",
     "socket.io": "^4.8.1",
-    "uuid": "^13.0.0",
+    "uuid": "^11.1.1",
     "winston": "^3.19.0"
+  },
+  "overrides": {
+    "ws": "^8.21.0",
+    "uuid": "^11.1.1"
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",

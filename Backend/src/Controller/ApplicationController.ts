@@ -1,45 +1,13 @@
 import { Request, Response } from "express";
 import { ApplicationService } from "../Service/ApplicationService";
-import Joi from "joi";
 import { rejectNonPdfFiles } from "../utils/validatePdfMagicBytes";
+import { applicationSchema } from "../Schemas/ApplicationValidation";
 import { sanitizeFilename } from "../utils/sanitizeFilename";
 import path from "path";
 import fs from "fs";
 import logger from "../utils/logger";
 
 const service = new ApplicationService();
-
-const productSchema = Joi.object({
-  productId: Joi.number().integer().required(),
-  quantity: Joi.number().positive().required(),
-  unit: Joi.string().required(),
-});
-
-const applicationSchema = Joi.object({
-  userId: Joi.number().integer().required(),
-  applicationDate: Joi.date().optional(),
-  status: Joi.string().optional(),
-  businessEmail: Joi.string().email().required(),
-  businessPhone: Joi.string().required(),
-  supplierComment: Joi.string().optional(),
-  name: Joi.string().required(),
-  location: Joi.string().required(),
-  freguesia: Joi.string().required(),
-  municipio: Joi.string().required(),
-  evaluationComment: Joi.string().optional(),
-  documentsSubmitted: Joi.array().items(
-    Joi.object({
-      filename: Joi.string().required(),
-      path: Joi.string().required()
-    })
-  ).optional(),
-  farmerProducts: Joi.array().items(
-    Joi.object({
-      week: Joi.number().integer().required(),
-      products: Joi.array().items(productSchema).required(),
-    })
-  ).required(),
-});
 
 const UPLOADS_DIR = path.resolve("uploads");
 
@@ -60,17 +28,27 @@ function getClientIp(req: Request): string {
   const forwarded = req.headers["x-forwarded-for"];
   if (forwarded) {
     return (Array.isArray(forwarded) ? forwarded[0] : forwarded)
-      .split(",")[0]
-      .trim();
+        .split(",")[0]
+        .trim();
   }
   return req.ip ?? "unknown";
 }
 
 export class ApplicationController {
 
+  // Plain JSON endpoint (currently not wired through ApplicationRoutes).
+  // Validates with the shared `applicationSchema` for defence in depth.
   static async createApplication(req: Request, res: Response) {
-    const { error } = applicationSchema.validate(req.body);
-    if (error) return res.status(400).json({ error: error.message });
+    const { error } = applicationSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      return res.status(400).json({
+        error: "Validation failed",
+        details: error.details.map((d) => ({
+          field: d.path.join("."),
+          message: d.message,
+        })),
+      });
+    }
 
     try {
       const app = await service.createApplication(req.body);
@@ -88,9 +66,9 @@ export class ApplicationController {
     }
   }
 
+  // :userId validated by validate(userIdParamSchema, "params") middleware.
   static async getApplicationByUser(req: Request, res: Response) {
     const userId = Number(req.params.userId);
-    if (isNaN(userId)) return res.status(400).json({ error: "Invalid userId" });
 
     try {
       const app = await service.getApplicationByUser(userId);
@@ -107,22 +85,18 @@ export class ApplicationController {
     res.json(apps);
   }
 
+  // Params validated by validate(applicationDocumentParamSchema, "params") middleware.
   static async getDocument(req: Request, res: Response) {
     const applicationId: number = Number(req.params.applicationId);
-    if (isNaN(applicationId)) {
-      return res.status(400).json({ error: "Invalid applicationId" });
-    }
     const filename: string = req.params.filename;
-    if (filename == null || filename.length == 0) {
-      return res.status(400).json({ error: "Invalid filename" });
-    }
 
     try {
       // MT14-Solution: ownership check (R4)
       const requestingUser = (req as any).user;
       const isNetworkManager = requestingUser.role === "NetworkManager";
+      const isCanteenManager = requestingUser.role === "CanteenManager";
 
-      if (!isNetworkManager) {
+      if (!isNetworkManager && !isCanteenManager) {
         const app = await service.getApplicationByUser(requestingUser.id);
         const isOwner = app && Number(app.id) === applicationId;
         if (!isOwner) {
@@ -138,7 +112,7 @@ export class ApplicationController {
       }
 
       const filePath: string = await service
-        .getFilePathByApplicationIdAndFileName(applicationId, filename);
+          .getFilePathByApplicationIdAndFileName(applicationId, filename);
 
       logger.info("APP:DOCUMENT_ACCESSED", {
         applicationId,
@@ -159,11 +133,20 @@ export class ApplicationController {
     }
   }
 
+  // Plain JSON endpoint (currently not wired through ApplicationRoutes).
+  // :applicationId validated by middleware; body validated here.
   static async updateApplication(req: Request, res: Response) {
     const applicationId = Number(req.params.applicationId);
-    if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
-    const { error } = applicationSchema.validate(req.body);
-    if (error) return res.status(400).json({ error: error.message });
+    const { error } = applicationSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      return res.status(400).json({
+        error: "Validation failed",
+        details: error.details.map((d) => ({
+          field: d.path.join("."),
+          message: d.message,
+        })),
+      });
+    }
 
     try {
       const updatedApp = await service.updateApplication(applicationId, req.body);
@@ -179,9 +162,9 @@ export class ApplicationController {
     }
   }
 
+  // :applicationId and body validated by route middleware.
   static async acceptApplication(req: Request, res: Response) {
     const applicationId = Number(req.params.applicationId);
-    if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
     try {
       const updatedApp = await service.acceptApplication(applicationId, req.body.evaluationComment);
       logger.info("APP:ACCEPTED", {
@@ -197,9 +180,9 @@ export class ApplicationController {
     }
   }
 
+  // :applicationId and body validated by route middleware.
   static async rejectApplication(req: Request, res: Response) {
     const applicationId = Number(req.params.applicationId);
-    if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
     try {
       const updatedApp = await service.rejectApplication(applicationId, req.body.evaluationComment);
       logger.info("APP:REJECTED", {
@@ -215,12 +198,14 @@ export class ApplicationController {
     }
   }
 
+  // Multipart endpoint — body validation happens here because farmerProducts
+  // arrives as a JSON string and documents come through multer.
   static async createApplicationWithFiles(req: Request, res: Response) {
     try {
       const { userId, businessEmail, businessPhone, name, location, freguesia, municipio, supplierComment, farmerProducts } = req.body;
 
-      const app = await service.createApplication({
-        userId,
+      const parsedBody = {
+        userId: Number(userId),
         businessEmail,
         businessPhone,
         name,
@@ -229,35 +214,48 @@ export class ApplicationController {
         municipio,
         supplierComment,
         documentsSubmitted: [],
-        farmerProducts: JSON.parse(farmerProducts)
-      });
+        farmerProducts: typeof farmerProducts === "string" ? JSON.parse(farmerProducts) : farmerProducts,
+      };
+
+      const { error } = applicationSchema.validate(parsedBody, { abortEarly: false });
+      if (error) {
+        return res.status(400).json({
+          error: "Validation failed",
+          details: error.details.map((d) => ({
+            field: d.path.join("."),
+            message: d.message,
+          })),
+        });
+      }
+
+      const app = await service.createApplication(parsedBody);
 
       if (!app) return res.status(500).json({ error: "Failed to create application" });
 
       const applicationId = app.id;
       const rawFiles = req.files;
-       const files: Express.Multer.File[] | null =
-         rawFiles === undefined
-           ? []
-           : Array.isArray(rawFiles) &&
-             rawFiles.every(
-               (f) =>
-                 f &&
-                 typeof f === "object" &&
-                 typeof (f as Express.Multer.File).originalname === "string" &&
-                 typeof (f as Express.Multer.File).path === "string"
-             )
-           ? (rawFiles as Express.Multer.File[])
-           : (() => {
-               logger.warn("APP:INVALID_FILES_PAYLOAD", {
-                 userId: req.body?.userId,
-                 ip: getClientIp(req),
-               });
-               return null;
-             })();
-       if (files === null) {
-         return res.status(400).json({ error: "Invalid files payload" });
-       }
+      const files: Express.Multer.File[] | null =
+          rawFiles === undefined
+              ? []
+              : Array.isArray(rawFiles) &&
+              rawFiles.every(
+                  (f) =>
+                      f &&
+                      typeof f === "object" &&
+                      typeof (f as Express.Multer.File).originalname === "string" &&
+                      typeof (f as Express.Multer.File).path === "string"
+              )
+                  ? (rawFiles as Express.Multer.File[])
+                  : (() => {
+                    logger.warn("APP:INVALID_FILES_PAYLOAD", {
+                      userId: req.body?.userId,
+                      ip: getClientIp(req),
+                    });
+                    return null;
+                  })();
+      if (files === null) {
+        return res.status(400).json({ error: "Invalid files payload" });
+      }
 
       const uploadsRoot = path.resolve("uploads");
       const safeUserId = sanitizeFilename(String(userId));
@@ -301,21 +299,20 @@ export class ApplicationController {
     }
   }
 
+  // Multipart endpoint — body validation happens here because farmerProducts
+  // arrives as a JSON string and documents come through multer.
+  // :applicationId is validated by route middleware.
   static async updateApplicationWithFiles(req: Request, res: Response) {
     try {
       const applicationId = Number(req.params.applicationId);
-      if (isNaN(applicationId)) return res.status(400).json({ error: "Invalid applicationId" });
 
       const existingApp = await service.getApplicationByUser(Number(req.body.userId));
 
       const rawFiles = req.files;
-       if (rawFiles != null && !Array.isArray(rawFiles)) {
-         return res.status(400).json({ error: "Invalid files payload" });
-       }
-       const files: Express.Multer.File[] = Array.isArray(rawFiles) ? rawFiles : [];
-       
-      const fs = require("fs");
-      const path = require("path");
+      if (rawFiles != null && !Array.isArray(rawFiles)) {
+        return res.status(400).json({ error: "Invalid files payload" });
+      }
+      const files: Express.Multer.File[] = Array.isArray(rawFiles) ? rawFiles : [];
 
       const newDocuments = files.map((f: Express.Multer.File) => {
         const { newFilename, newPath } = buildSafeFilePath(`${existingApp.userId}-${applicationId}`, f.originalname);
@@ -324,17 +321,28 @@ export class ApplicationController {
       });
 
       const documentsSubmitted = existingApp.documentsSubmitted
-        ? [...existingApp.documentsSubmitted, ...newDocuments]
-        : newDocuments;
+          ? [...existingApp.documentsSubmitted, ...newDocuments]
+          : newDocuments;
 
       const bodyData = {
         ...req.body,
-        farmerProducts: JSON.parse(req.body.farmerProducts),
-        documentsSubmitted
+        userId: Number(req.body.userId),
+        farmerProducts: typeof req.body.farmerProducts === "string"
+            ? JSON.parse(req.body.farmerProducts)
+            : req.body.farmerProducts,
+        documentsSubmitted,
       };
 
-      const { error } = applicationSchema.validate(bodyData);
-      if (error) return res.status(400).json({ error: error.message });
+      const { error } = applicationSchema.validate(bodyData, { abortEarly: false });
+      if (error) {
+        return res.status(400).json({
+          error: "Validation failed",
+          details: error.details.map((d) => ({
+            field: d.path.join("."),
+            message: d.message,
+          })),
+        });
+      }
 
       const updatedApp = await service.updateApplication(applicationId, bodyData);
 

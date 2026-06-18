@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import type { Ingredient } from "../models/Ingredient";
 import { API_BASE_URL } from "../../config";
 
@@ -9,12 +9,12 @@ export const ingredientService = {
   // Criar um novo menu
   // -------------------------
   async createIngredient(data: Partial<Ingredient>): Promise<Ingredient> {
-    const response = await axios.post<Ingredient>(`${API_URL}`, data);
+    const response = await apiClient.post<Ingredient>(`${API_URL}`, data);
     return response.data;
   },
 
   async getIngredientById(id: number): Promise<Ingredient> {
-    const response = await axios.get<Ingredient>(`${API_URL}/${id}`);
+    const response = await apiClient.get<Ingredient>(`${API_URL}/${id}`);
     return response.data;
   }
 };

@@ -1,17 +1,19 @@
 import {DishService} from "../Service/DishService";
 import {Request, Response} from "express";
 import {createDishSchema} from "../Schemas/DishValidation";
+import { validateOrFail } from "../utils/validateOrFail";
+
 
 const service = new DishService()
 
 export class DishController {
 
     static async createDish(req: Request, res: Response) {
-        const { error } = createDishSchema.validate(req.body);
-        if (error) return res.status(400).json({ error: error.message });
+        const v = validateOrFail(createDishSchema, req.body, res);
+        if (!v.ok) return;
 
         try {
-            const result = await service.createDish(req.body);
+            const result = await service.createDish(v.value);
             res.json(result);
         } catch (err: any) {
             console.log("ERR", err);
@@ -31,7 +33,7 @@ export class DishController {
 
     static async getDish(req: Request, res: Response) {
         const id = Number(req.params.id);
-        if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+        if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
 
         try {
             const dish = await service.getDishById(id);
@@ -45,7 +47,7 @@ export class DishController {
 
     static async getDishByRecipe(req: Request, res: Response) {
         const id = Number(req.params.id);
-        if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+        if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
 
         try {
             const dish = await service.getDishByRecipeId(id);

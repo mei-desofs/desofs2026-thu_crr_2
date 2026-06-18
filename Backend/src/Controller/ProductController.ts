@@ -1,17 +1,19 @@
 import { Request, Response } from "express";
 import { ProductService } from "../Service/ProductService";
 import { createProductSchema } from "../Schemas/product.validation";
+import { validateOrFail } from "../utils/validateOrFail";
+
 
 const service = new ProductService();
 
 export class ProductController {
 
   static async createProduct(req: Request, res: Response) {
-    const { error } = createProductSchema.validate(req.body);
-    if (error) return res.status(400).json({ error: error.message });
+    const v = validateOrFail(createProductSchema, req.body, res);
+    if (!v.ok) return;
 
     try {
-      const result = await service.createProduct(req.body);
+      const result = await service.createProduct(v.value);
       res.json(result);
     } catch (err: any) {
       switch (err.message) {
@@ -38,7 +40,7 @@ export class ProductController {
 
   static async getProduct(req: Request, res: Response) {
     const id = Number(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+    if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
 
     try {
       const product = await service.getProductById(id);

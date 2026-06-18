@@ -1,3 +1,4 @@
+import { useLogout } from "../../util/useLogout";
 import { Bell, LogOut, BarChart3, Info, Leaf } from 'lucide-react';
 import { refectoryManagerStyles } from './RefectoryManagerScreen.styles';
 import { useNavigate } from 'react-router-dom';
@@ -13,9 +14,7 @@ export default function RefectoryManagerDashboard() {
         navigate('/statistics-dashboard');
     };
 
-    const handleLogout = () => {
-        navigate('/login');
-    };
+    const handleLogout = useLogout();
 
     return (
         <div style={refectoryManagerStyles.pageContainer}>

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from "axios";
+import { apiClient } from "./setupAxiosAuth";
 import { API_BASE_URL } from "../../config";
 import type { Reservation, ReservationStatus } from "../models/Reservation";
 import type { User } from "../models/User";
@@ -42,7 +42,7 @@ export const reservationService = {
   // Criar uma nova reserva
   // -------------------------
   async createReservation(data: CreateReservationPayload): Promise<Reservation> {
-    const response = await axios.post<Reservation>(API_URL, data);
+    const response = await apiClient.post<Reservation>(API_URL, data);
     return response.data;
   },
 
@@ -51,7 +51,7 @@ export const reservationService = {
   // Retorna reservas com relacionamentos (user, meal, dish) quando disponíveis
   // -------------------------
   async listReservations(params?: { userId?: number; status?: string; refeitorioId?: number }): Promise<ReservationWithRelations[]> {
-    const response = await axios.get<ReservationWithRelations[]>(API_URL, { params });
+    const response = await apiClient.get<ReservationWithRelations[]>(API_URL, { params });
     return response.data;
   },
 
@@ -59,7 +59,7 @@ export const reservationService = {
   // Cancelar uma reserva
   // -------------------------
   async cancelReservation(id: number): Promise<Reservation> {
-    const response = await axios.patch<Reservation>(`${API_URL}/${id}/cancel`);
+    const response = await apiClient.patch<Reservation>(`${API_URL}/${id}/cancel`);
     return response.data;
   },
 
@@ -67,7 +67,7 @@ export const reservationService = {
   // Atualizar status de uma reserva
   // -------------------------
   async updateStatus(id: number, status: ReservationStatus): Promise<Reservation> {
-    const response = await axios.patch<Reservation>(`${API_URL}/${id}/status`, { status });
+    const response = await apiClient.patch<Reservation>(`${API_URL}/${id}/status`, { status });
     return response.data;
   },
 
@@ -75,7 +75,7 @@ export const reservationService = {
   // Levantar bilhetes de uma reserva
   // -------------------------
   async liftTickets(id: number, quantity: number): Promise<Reservation> {
-    const response = await axios.post<Reservation>(`${API_URL}/${id}/lift`, { quantity });
+    const response = await apiClient.post<Reservation>(`${API_URL}/${id}/lift`, { quantity });
     return response.data;
   },
 };

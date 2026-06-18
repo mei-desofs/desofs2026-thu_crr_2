@@ -1,10 +1,15 @@
 import { Request, Response } from "express";
 import { NeededProductService } from "../Service/NeededProductService";
+import { createNeededProductSchema, updateNeededProductSchema } from "../Schemas/NeededProductValidation";
+import { validateOrFail } from "../utils/validateOrFail";
+
 
 export class NeededProductController {
     static async create(req: Request, res: Response) {
         try {
-            const { date, productId, mealId, unit, quantity, canteenId } = req.body;
+            const cv = validateOrFail(createNeededProductSchema, req.body, res);
+            if (!cv.ok) return;
+            const { date, productId, mealId, unit, quantity, canteenId } = cv.value;
 
             if (!date || !productId || !unit || !quantity || !canteenId) {
                 return res.status(400).json({
@@ -28,12 +33,14 @@ export class NeededProductController {
     }
 
     static async update(req: Request, res: Response) {
+        const uv = validateOrFail(updateNeededProductSchema, req.body, res);
+        if (!uv.ok) return;
         try {
             const { id } = req.params;
 
             const neededProduct = await NeededProductService.update(
                 Number(id),
-                req.body
+                uv.value
             );
 
             return res.status(200).json(neededProduct);

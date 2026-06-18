@@ -1,3 +1,4 @@
+import { useLogout } from "../../util/useLogout";
 import { ArrowLeft, Bell, LogOut } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { reservationStyles } from "./ReservationScreen.styles";
@@ -107,9 +108,7 @@ export default function ReservationScreen() {
     }
   };
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  const handleLogout = useLogout();
 
   return (
     <div style={reservationStyles.pageContainer}>

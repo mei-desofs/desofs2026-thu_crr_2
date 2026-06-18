@@ -1,15 +1,1 @@
-import { Router } from "express";
-import { ProductController } from "../Controller/ProductController";
-import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
-
-const router = Router();
-
-router.use(apiRateLimiter);
-router.use(authMiddleware);
-
-// CRUD Products
-router.post("/", ProductController.createProduct);
-router.get("/", ProductController.listProducts);
-router.get("/:id", ProductController.getProduct);
-
-export default router;
+import { Router } from "express";import { ProductController } from "../Controller/ProductController";import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";import { authorizeRoles } from "../middlewares/authorizeRoles";import { RoleGroups } from "../Config/roles";import { validate } from "../middlewares/validate";import { createProductSchema } from "../Schemas/product.validation";import { idParamSchema } from "../Schemas/common.validation";const router = Router();router.use(apiRateLimiter);router.use(authMiddleware);router.post(    "/",    validate(createProductSchema),    authorizeRoles(...RoleGroups.ADMIN_WRITE),    ProductController.createProduct,);router.get(    "/",    authorizeRoles(...RoleGroups.CATALOG_READ),    ProductController.listProducts,);router.get(    "/:id",    validate(idParamSchema, "params"),    authorizeRoles(...RoleGroups.CATALOG_READ),    ProductController.getProduct,);export default router;

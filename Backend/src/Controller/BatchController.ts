@@ -1,17 +1,18 @@
 import {BatchService} from "../Service/BatchService";
 import {Request, Response} from "express";
 import {createBatchSchema} from "../Schemas/BatchValidation";
+import {validateOrFail} from "../utils/validateOrFail";
 
 const service = new BatchService();
 
 export class BatchController {
 
     static async createBatch(req: Request, res: Response) {
-        const { error } = createBatchSchema.validate(req.body);
-        if (error) return res.status(400).json({ error: error.message });
+        const v = validateOrFail(createBatchSchema, req.body, res);
+        if (!v.ok) return;
 
         try {
-            const result = await service.createBatch(req.body);
+            const result = await service.createBatch(v.value);
             res.json(result);
         } catch (err: any) {
             switch (err.message) {
@@ -30,7 +31,7 @@ export class BatchController {
 
     static async getBatch(req: Request, res: Response) {
         const id = Number(req.params.id);
-        if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+        if (isNaN(id) || id <= 0) return res.status(400).json({ error: "Invalid ID" });
 
         try {
             const batch = await service.getBatchById(id);

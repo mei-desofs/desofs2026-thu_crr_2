@@ -1,60 +1,1 @@
-import { Router } from "express";
-import { ApplicationController } from "../Controller/ApplicationController";
-import multer from "multer";
-import { v4 as uuidv4 } from "uuid";
-import path from "path";
-import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
-
-// Configuração do multer para PDFs com nomes únicos
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // pasta onde os PDFs serão guardados
-  },
-  filename: function (req, file, cb) {
-    // MT15-Solution: unpredictable UUID filename - no extension to avoid type guessing (R4)
-    cb(null, uuidv4());
-  },
-});
-
-const upload = multer({ 
-  storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5 MB por ficheiro
-    files: 10,                  // máximo 10 ficheiros por pedido
-  },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype !== "application/pdf") {
-      return cb(new Error("Apenas PDFs são permitidos!"));
-    }
-    cb(null, true);
-  },
-});
-
-const router = Router();
-
-router.use(apiRateLimiter);
-router.use(authMiddleware);
-
-// Criar nova aplicação com FarmerProducts e documentos PDF
-router.post("/", upload.array("documents"), ApplicationController.createApplicationWithFiles);
-
-// Atualizar uma aplicação com FarmerProducts e documentos PDF
-router.put("/:applicationId", upload.array("documents"), ApplicationController.updateApplicationWithFiles);
-
-// Listar todas as aplicações
-router.get("/", ApplicationController.listApplications);
-
-// Get document of one application
-// MT14-Solution: authenticated route - only logged-in users can fetch documents (R4)
-router.get('/:applicationId/documents/:filename', ApplicationController.getDocument);
-
-// Obter aplicação por userId
-router.get("/user/:userId", ApplicationController.getApplicationByUser);
-
-// Aceitar uma aplicação
-router.post("/:applicationId/accept", ApplicationController.acceptApplication);
-
-// Rejeitar uma aplicação
-router.post("/:applicationId/reject", ApplicationController.rejectApplication);
-
-export default router;
+import { Router } from "express";import { ApplicationController } from "../Controller/ApplicationController";import multer from "multer";import { v4 as uuidv4 } from "uuid";import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";import { authorizeRoles } from "../middlewares/authorizeRoles";import { requireSelfOrRoles } from "../middlewares/requireSelfOrRoles";import { Role, RoleGroups } from "../Config/roles";import { validate } from "../middlewares/validate";import { evaluateApplicationSchema } from "../Schemas/ApplicationValidation";import {  applicationIdParamSchema,  applicationDocumentParamSchema,  userIdParamSchema,} from "../Schemas/common.validation";const storage = multer.diskStorage({  destination: function (_req, _file, cb) {    cb(null, "uploads/");  },  filename: function (_req, _file, cb) {    cb(null, uuidv4());  },});const upload = multer({  storage,  limits: {    fileSize: 5 * 1024 * 1024,    files: 10,  },  fileFilter: (_req, file, cb) => {    if (file.mimetype !== "application/pdf") {      return cb(new Error("Apenas PDFs são permitidos!"));    }    cb(null, true);  },});const router = Router();router.use(apiRateLimiter);router.use(authMiddleware);// Visitor (farmer applicant): create / update own applicationrouter.post(  "/",  authorizeRoles(...RoleGroups.APPLICANT),  upload.array("documents"),  ApplicationController.createApplicationWithFiles,);router.put(  "/:applicationId",  validate(applicationIdParamSchema, "params"),  authorizeRoles(...RoleGroups.APPLICANT),  upload.array("documents"),  ApplicationController.updateApplicationWithFiles,);// Network / canteen managers: evaluate applicationsrouter.get(  "/",  authorizeRoles(...RoleGroups.CANTEEN_MGMT, Role.Visitor),  ApplicationController.listApplications,);router.get(  "/:applicationId/documents/:filename",  validate(applicationDocumentParamSchema, "params"),  authorizeRoles(Role.Visitor, ...RoleGroups.CANTEEN_MGMT),  ApplicationController.getDocument,);router.get(  "/user/:userId",  validate(userIdParamSchema, "params"),  requireSelfOrRoles("userId", ...RoleGroups.CANTEEN_MGMT),  ApplicationController.getApplicationByUser,);router.post(  "/:applicationId/accept",  validate(applicationIdParamSchema, "params"),  validate(evaluateApplicationSchema),  authorizeRoles(...RoleGroups.NETWORK),  ApplicationController.acceptApplication,);router.post(  "/:applicationId/reject",  validate(applicationIdParamSchema, "params"),  validate(evaluateApplicationSchema),  authorizeRoles(...RoleGroups.NETWORK),  ApplicationController.rejectApplication,);export default router;

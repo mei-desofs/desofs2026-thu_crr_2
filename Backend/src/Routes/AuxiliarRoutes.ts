@@ -1,40 +1,1 @@
-import { Router } from "express";
-import { AuxiliarController } from "../Controller/AuxiliarController";
-import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";
-
-const router = Router();
-
-router.use(apiRateLimiter);
-router.use(authMiddleware);
-
-// Units
-router.post("/unit", AuxiliarController.createUnit);
-router.get("/unit", AuxiliarController.listUnits);
-
-// Allergens
-router.post("/allergen", AuxiliarController.createAllergen);
-router.get("/allergen", AuxiliarController.listAllergens);
-
-// Nutrition Types
-router.post("/nutrition", AuxiliarController.createNutritionType);
-router.get("/nutrition", AuxiliarController.listNutritionTypes);
-
-// Product Types
-router.post("/product-type", AuxiliarController.createProductType);
-router.get("/product-type", AuxiliarController.listProductTypes);
-
-// Dish Types
-router.post("/dish-type", AuxiliarController.createDishType);
-router.get("/dish-type", AuxiliarController.listDishTypes);
-
-// Meal Types
-router.post("/meal-type", AuxiliarController.createMealType);
-router.get("/meal-type", AuxiliarController.listMealTypes);
-
-// Menu Types
-router.post("/menu-type", AuxiliarController.createMenuType);
-router.get("/menu-type", AuxiliarController.listMenuTypes);
-
-router.get("/ordered-suppliers", AuxiliarController.listOrderedSuppliers);
-
-export default router;
+import { Router } from "express";import { AuxiliarController } from "../Controller/AuxiliarController";import { apiRateLimiter, authMiddleware } from "../middlewares/authMiddleware";import { authorizeRoles } from "../middlewares/authorizeRoles";import { RoleGroups } from "../Config/roles";import { validate } from "../middlewares/validate";import {    createGenericTypeSchema,    createUnitSchema,} from "../Schemas/AuxiliarValidation";const router = Router();router.use(apiRateLimiter);router.use(authMiddleware);const adminWrite = authorizeRoles(...RoleGroups.ADMIN_WRITE);const canteenRead = authorizeRoles(...RoleGroups.CANTEEN_MGMT);router.post("/unit",validate(createUnitSchema), adminWrite, AuxiliarController.createUnit);router.get("/unit", canteenRead, AuxiliarController.listUnits);router.post("/allergen",validate(createGenericTypeSchema), adminWrite, AuxiliarController.createAllergen);router.get("/allergen", canteenRead, AuxiliarController.listAllergens);router.post("/nutrition", validate(createGenericTypeSchema),adminWrite, AuxiliarController.createNutritionType);router.get("/nutrition", canteenRead, AuxiliarController.listNutritionTypes);router.post("/product-type", validate(createGenericTypeSchema),adminWrite, AuxiliarController.createProductType);router.get("/product-type", canteenRead, AuxiliarController.listProductTypes);router.post("/dish-type", validate(createGenericTypeSchema),adminWrite, AuxiliarController.createDishType);router.get("/dish-type", canteenRead, AuxiliarController.listDishTypes);router.post("/meal-type", validate(createGenericTypeSchema),adminWrite, AuxiliarController.createMealType);router.get("/meal-type", canteenRead, AuxiliarController.listMealTypes);router.post("/menu-type", validate(createGenericTypeSchema),adminWrite, AuxiliarController.createMenuType);router.get("/menu-type", canteenRead, AuxiliarController.listMenuTypes);router.get(  "/ordered-suppliers",  canteenRead,  AuxiliarController.listOrderedSuppliers,);export default router;

@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
 import { WasteReportService } from "../Service/WasteReportService";
+import { createWasteReportSchema } from "../Schemas/WasteReportValidation";
+import { validateOrFail } from "../utils/validateOrFail";
+
 
 const service = new WasteReportService();
 
 export class WasteReportController {
     static async createWasteReport(req: Request, res: Response) {
-        const { wastePercentage, mealId, reservationId, reportedBy, refeitorioId } = req.body;
-
-        if (!wastePercentage || !mealId || !reportedBy || !refeitorioId) {
-            return res.status(400).json({ error: "wastePercentage, mealId, reportedBy, and refeitorioId are required" });
-        }
+        const cv = validateOrFail(createWasteReportSchema, req.body, res);
+        if (!cv.ok) return;
+        const { wastePercentage, mealId, reservationId, reportedBy, refeitorioId } = cv.value;
 
         try {
             const report = await service.createWasteReport({
@@ -51,10 +52,6 @@ export class WasteReportController {
     static async getWasteReportsByDate(req: Request, res: Response) {
         const { date } = req.query;
 
-        if (!date) {
-            return res.status(400).json({ error: "date is required" });
-        }
-
         try {
             const reports = await service.getWasteReportsByDate(new Date(date as string));
             res.status(200).json(reports);
@@ -65,10 +62,6 @@ export class WasteReportController {
 
     static async getWasteReportsForConsumedMeals(req: Request, res: Response) {
         const { date } = req.query;
-
-        if (!date) {
-            return res.status(400).json({ error: "date is required" });
-        }
 
         try {
             const result = await service.getWasteReportsForConsumedMeals(new Date(date as string));
@@ -83,37 +76,37 @@ export class WasteReportController {
 
         try {
             const filter: any = {};
-            
+
             if (mealId) {
                 const mealIdNum = parseInt(mealId as string);
                 if (!isNaN(mealIdNum)) {
                     filter.mealId = mealIdNum;
                 }
             }
-            
+
             if (dateRangeStart) {
                 filter.dateRangeStart = new Date(dateRangeStart as string);
             }
-            
+
             if (dateRangeEnd) {
                 filter.dateRangeEnd = new Date(dateRangeEnd as string);
             }
-            
+
             if (date) {
                 filter.date = new Date(date as string);
             }
-            
+
             if (period && (period === "day" || period === "week" || period === "month" || period === "year")) {
                 filter.period = period;
             }
-            
+
             if (dishTypeId) {
                 const dishTypeIdNum = parseInt(dishTypeId as string);
                 if (!isNaN(dishTypeIdNum)) {
                     filter.dishTypeId = dishTypeIdNum;
                 }
             }
-            
+
             if (dayOfWeek) {
                 const dayOfWeekNum = parseInt(dayOfWeek as string);
                 if (!isNaN(dayOfWeekNum) && dayOfWeekNum >= 0 && dayOfWeekNum <= 6) {
@@ -127,7 +120,7 @@ export class WasteReportController {
                     filter.refeitorioId = refeitorioIdNum;
                 }
             }
-            
+
             const result = await service.getWasteReportStatistics(Object.keys(filter).length > 0 ? filter : undefined);
             res.status(200).json(result);
         } catch (err: any) {
