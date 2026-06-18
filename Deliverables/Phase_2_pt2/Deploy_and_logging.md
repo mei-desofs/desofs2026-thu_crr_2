@@ -213,5 +213,11 @@ After every commit to the main branch (`main`), Render detects the change via a 
 - `.gitignore` excludes `.env`, `node_modules`, and `dist/`
 - Production code contains no exposed test data bootstrap logic
 
+## Login Example
+
+![brute force logging](assets/bf.png)
+
+![brute force logging](assets/bf2.png)
+
 ---
 [Voltar ao README](../README.md)
