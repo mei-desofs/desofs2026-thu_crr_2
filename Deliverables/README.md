@@ -96,3 +96,9 @@
 
 ## Backup Strategy
 [Ver documento](Phase_2_pt2/Backup_strategy.md) 
+
+## Vulnerability Management
+[Ver documento](Phase_2_pt2/vulnerability_management.md)
+
+### ASVS
+[Ver documento](Phase_1/ASVS_5.0_Tracker.xlsx)
